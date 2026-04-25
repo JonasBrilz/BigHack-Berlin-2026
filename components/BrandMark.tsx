@@ -9,7 +9,7 @@ export default function BrandMark({ className = "" }: BrandMarkProps) {
     <Link
       href="/"
       className={`inline-flex items-center gap-3 ${className}`}
-      aria-label="Zurück zur Startseite"
+      aria-label="Back to home"
     >
       <svg
         width="30"

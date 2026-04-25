@@ -10,7 +10,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "PAI — Profit Analysis Intelligence",
-  description: "Verstehe wo dein Unternehmen wachsen kann.",
+  description: "See where your company is leaving money on the table.",
 };
 
 export default function RootLayout({
@@ -19,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="de" className={inter.variable}>
+    <html lang="en" className={inter.variable}>
       <body className="font-sans bg-canvas text-ink min-h-screen">
         {children}
       </body>

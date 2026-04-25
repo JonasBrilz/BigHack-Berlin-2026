@@ -19,17 +19,18 @@ import {
 import BrandMark from "@/components/BrandMark";
 import {
   BRAND,
+  allPromptsByLift,
   competitorsRanked,
   data,
   formatEuro,
   formatPct,
   lowestVisibilityPrompts,
-  topActions,
+  type PromptDetail,
 } from "@/lib/peec";
 
 const ANALYSIS_FLAG = "peec.hasAnalysis";
 
-export default function AuswertungPage() {
+export default function ReportPage() {
   useEffect(() => {
     try {
       localStorage.setItem(ANALYSIS_FLAG, "1");
@@ -39,12 +40,8 @@ export default function AuswertungPage() {
   }, []);
 
   const competitors = competitorsRanked();
-  const top3 = topActions(3);
+  const allPrompts = allPromptsByLift();
   const weakPrompts = lowestVisibilityPrompts(3);
-  const topPromptsTotalLift = top3.reduce(
-    (s, a) => s + a.revenue_lift_eur,
-    0
-  );
 
   return (
     <main className="min-h-screen flex flex-col">
@@ -78,9 +75,8 @@ export default function AuswertungPage() {
 
         <Competitive competitors={competitors} totalPrompts={data.total_prompts} />
 
-        <TopThree
-          actions={top3}
-          totalLift={topPromptsTotalLift}
+        <PromptsTable
+          prompts={allPrompts}
           sharePct={data.top3_lift_share_pct}
         />
 
@@ -106,13 +102,13 @@ function Header() {
       className="text-center mb-12"
     >
       <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-line bg-white text-[13px] mb-5">
-        <CheckCircle2 className="w-3.5 h-3.5 text-accent" />
-        Analyse abgeschlossen · {BRAND}
+        <CheckCircle2 className="w-3.5 h-3.5 text-gain" />
+        Analysis complete · {BRAND}
       </div>
       <h1 className="text-[clamp(2.25rem,6vw,4rem)] font-semibold tracking-[-0.04em] leading-[1.02] max-w-3xl mx-auto">
-        <span className="text-ink">Wo {BRAND} in AI-Antworten</span>
+        <span className="text-ink">Where {BRAND} is leaving</span>
         <br />
-        <span className="text-muted">Geld liegen lässt.</span>
+        <span className="text-muted">money on the table in AI search.</span>
       </h1>
     </motion.div>
   );
@@ -130,22 +126,22 @@ function Hero({ lift, customers }: { lift: number; customers: number }) {
       <div className="relative">
         <div className="text-[13px] uppercase tracking-wider text-white/60 mb-3 flex items-center gap-2">
           <Sparkles className="w-3.5 h-3.5" />
-          Verlorener Jahresumsatz in AI-Suche
+          Potential gain · annual
         </div>
-        <div className="text-[clamp(3.25rem,11vw,7rem)] font-semibold tracking-[-0.04em] leading-none">
-          {formatEuro(lift)}
+        <div className="text-[clamp(3.25rem,11vw,7rem)] font-semibold tracking-[-0.04em] leading-none text-gain">
+          +{formatEuro(lift)}
         </div>
         <div className="mt-5 text-[17px] text-white/70 leading-relaxed flex items-center gap-2">
           <Users className="w-4 h-4 text-white/60" />
           ≈{" "}
           <strong className="text-white">
-            {customers.toLocaleString("de-DE", {
+            {customers.toLocaleString("en-US", {
               minimumFractionDigits: 1,
               maximumFractionDigits: 1,
             })}{" "}
-            Neukunden / Jahr
+            new customers / year
           </strong>
-          , die heute über AI-Antworten an HubSpot &amp; Co. abfließen.
+          , currently flowing to HubSpot &amp; co. via AI answers.
         </div>
       </div>
     </motion.div>
@@ -173,10 +169,10 @@ function VisibilityGap({
       <div className="flex items-start justify-between flex-wrap gap-4 mb-6">
         <div>
           <h2 className="text-[22px] font-semibold tracking-[-0.02em]">
-            {Math.round(gapPp)} pp Sichtbarkeits-Gap
+            {Math.round(gapPp)} pp visibility gap
           </h2>
           <p className="text-muted text-[14px] mt-1">
-            So oft erwähnt AI {leaderName} im Vergleich zu {BRAND}.
+            How often AI mentions {leaderName} compared to {BRAND}.
           </p>
         </div>
       </div>
@@ -266,7 +262,7 @@ function InvisibleCallout({
               / {total}
             </span>
             <span className="text-[14px] text-muted ml-2">
-              Prompts, in denen {BRAND} nicht auftaucht.
+              prompts where {BRAND} doesn&apos;t show up at all.
             </span>
           </div>
           <div className="mt-5 grid sm:grid-cols-3 gap-2">
@@ -276,10 +272,10 @@ function InvisibleCallout({
                 className="rounded-lg bg-canvas border border-line px-3.5 py-3"
               >
                 <div className="text-[11px] uppercase tracking-wider text-muted">
-                  Sichtbarkeit {Math.round(p.your_visibility * 100)}%
+                  Visibility {Math.round(p.your_visibility * 100)}%
                 </div>
                 <div className="text-[13px] mt-1 leading-snug line-clamp-3">
-                  „{p.prompt_message}"
+                  &ldquo;{p.prompt_message}&rdquo;
                 </div>
               </div>
             ))}
@@ -306,10 +302,10 @@ function Competitive({
       className="rounded-2xl bg-white border border-line p-7 mb-8"
     >
       <h2 className="text-[22px] font-semibold tracking-[-0.02em] mb-1">
-        Wettbewerb in AI-Antworten
+        Competitive landscape
       </h2>
       <p className="text-muted text-[14px] mb-6">
-        Wer schlägt {BRAND} in wie vielen der {totalPrompts} relevanten Prompts.
+        Who beats {BRAND} across the {totalPrompts} relevant prompts.
       </p>
       <div className="space-y-4">
         {competitors.map((c, i) => {
@@ -322,7 +318,7 @@ function Competitive({
                   {c.competitor_name}
                 </span>
                 <span className="text-[13px] text-muted tabular-nums">
-                  {c.prompts_won_against_you} / {totalPrompts} Prompts
+                  {c.prompts_won_against_you} / {totalPrompts} prompts
                   <span className="text-muted/60"> · {pct}%</span>
                 </span>
               </div>
@@ -342,16 +338,15 @@ function Competitive({
   );
 }
 
-function TopThree({
-  actions,
-  totalLift,
+function PromptsTable({
+  prompts,
   sharePct,
 }: {
-  actions: ReturnType<typeof topActions>;
-  totalLift: number;
+  prompts: PromptDetail[];
   sharePct: number;
 }) {
   const [open, setOpen] = useState<string | null>(null);
+  const total = prompts.length;
 
   return (
     <motion.div
@@ -363,38 +358,52 @@ function TopThree({
       <div className="flex items-start justify-between flex-wrap gap-4 mb-6">
         <div>
           <h2 className="text-[22px] font-semibold tracking-[-0.02em]">
-            Fix diese 3 Prompts
+            All {total} prompts
           </h2>
           <p className="text-muted text-[14px] mt-1">
-            <span className="text-ink font-medium">{sharePct}%</span> des
-            gesamten Hebels (
-            <span className="tabular-nums">{formatEuro(totalLift, true)}</span>
-            ) liegen in nur drei Prompts.
+            Top 3 capture{" "}
+            <span className="text-ink font-medium">{sharePct}%</span> of total
+            lift. Click any row for full stats and the recommended action.
           </p>
         </div>
         <div className="inline-flex items-center gap-2 text-[12px] text-muted">
           <Target className="w-3.5 h-3.5" />
-          klick für Action-Empfehlung
+          ranked by revenue lift
         </div>
       </div>
 
-      <div className="divide-y divide-line border border-line rounded-xl overflow-hidden">
-        {actions.map((a, i) => {
-          const isOpen = open === a.prompt_id;
+      <div className="border border-line rounded-xl overflow-hidden">
+        {prompts.map((p, i) => {
+          const isOpen = open === p.prompt_id;
+          const isTop3 = i < 3;
           return (
-            <div key={a.prompt_id} className="bg-canvas/40">
+            <div
+              key={p.prompt_id}
+              className={`${
+                i > 0 ? "border-t border-line" : ""
+              } ${isTop3 ? "bg-canvas/40" : "bg-white"}`}
+            >
               <button
-                onClick={() => setOpen(isOpen ? null : a.prompt_id)}
+                onClick={() => setOpen(isOpen ? null : p.prompt_id)}
                 className="w-full text-left flex items-center gap-4 p-4 hover:bg-canvas transition"
               >
-                <span className="flex-shrink-0 w-7 h-7 rounded-full bg-ink text-white text-[12px] font-semibold flex items-center justify-center">
+                <span
+                  className={`flex-shrink-0 w-7 h-7 rounded-full text-[12px] font-semibold flex items-center justify-center ${
+                    isTop3
+                      ? "bg-ink text-white"
+                      : "bg-canvas border border-line text-muted"
+                  }`}
+                >
                   {i + 1}
                 </span>
                 <span className="flex-1 min-w-0 text-[14px] leading-snug">
-                  {a.prompt_message}
+                  {p.prompt_message}
                 </span>
-                <span className="text-[15px] font-semibold tabular-nums whitespace-nowrap text-accent">
-                  {formatEuro(a.revenue_lift_eur, true)}
+                <span className="hidden sm:inline-flex items-center gap-1 text-[12px] text-muted whitespace-nowrap tabular-nums">
+                  vis {Math.round(p.your_visibility * 100)}%
+                </span>
+                <span className="text-[15px] font-semibold tabular-nums whitespace-nowrap text-gain">
+                  +{formatEuro(p.revenue_lift_eur)}
                 </span>
                 <span className="text-muted">
                   {isOpen ? (
@@ -413,35 +422,7 @@ function TopThree({
                     transition={{ duration: 0.25 }}
                     className="overflow-hidden"
                   >
-                    <div className="px-4 pb-4 pt-1 grid sm:grid-cols-2 gap-3">
-                      <div className="rounded-lg bg-white border border-line p-4">
-                        <div className="text-[11px] uppercase tracking-wider text-muted mb-1.5">
-                          Empfohlene Aktion
-                        </div>
-                        <div className="text-[14px] font-medium capitalize">
-                          {a.action_type.replace(/_/g, " ")}
-                        </div>
-                        <ul className="mt-2 space-y-1 text-[13px] text-muted">
-                          {a.suggested_targets.map((t) => (
-                            <li key={t} className="leading-snug">
-                              · {t}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div className="rounded-lg bg-white border border-line p-4">
-                        <div className="text-[11px] uppercase tracking-wider text-muted mb-1.5">
-                          Evidence
-                        </div>
-                        <ul className="space-y-1 text-[13px] text-muted">
-                          {a.evidence_signals.map((s) => (
-                            <li key={s} className="leading-snug">
-                              · {s}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
+                    <PromptDetailView prompt={p} />
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -450,6 +431,117 @@ function TopThree({
         })}
       </div>
     </motion.div>
+  );
+}
+
+function PromptDetailView({ prompt }: { prompt: PromptDetail }) {
+  return (
+    <div className="px-4 pb-5 pt-1 grid md:grid-cols-3 gap-3">
+      <Stat
+        label="Your visibility"
+        value={`${Math.round(prompt.your_visibility * 100)}%`}
+        sub={`avg position ${prompt.your_position.toFixed(1)}`}
+      />
+      <Stat
+        label={`Top competitor · ${prompt.top_competitor_name}`}
+        value={`${Math.round(prompt.top_competitor_visibility * 100)}%`}
+        sub="avg visibility"
+      />
+      <Stat
+        label="Annual mentions"
+        value={Math.round(prompt.annual_mentions).toLocaleString("en-US")}
+        sub={
+          prompt.volume_source === "chat_fallback"
+            ? "sample-extrapolation"
+            : `search_volume ${prompt.search_volume.toLocaleString("en-US")}`
+        }
+      />
+      <Stat
+        label="Current annual revenue"
+        value={formatEuro(prompt.current_annual_revenue_eur)}
+      />
+      <Stat
+        label="Target annual revenue"
+        value={formatEuro(prompt.target_annual_revenue_eur)}
+        sub={`if visibility → ${Math.round(prompt.target_visibility * 100)}% @ pos ${prompt.target_position.toFixed(1)}`}
+      />
+      <Stat
+        label="Revenue lift"
+        value={`+${formatEuro(prompt.revenue_lift_eur)}`}
+        accent="gain"
+      />
+
+      {prompt.action && (
+        <div className="md:col-span-3 rounded-lg bg-white border border-line p-4 mt-1">
+          <div className="flex items-start justify-between flex-wrap gap-3 mb-3">
+            <div>
+              <div className="text-[11px] uppercase tracking-wider text-muted">
+                Recommended action
+              </div>
+              <div className="text-[14px] font-medium capitalize mt-0.5">
+                {prompt.action.action_type.replace(/_/g, " ")}
+              </div>
+            </div>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div>
+              <div className="text-[11px] uppercase tracking-wider text-muted mb-1.5">
+                Suggested targets
+              </div>
+              <ul className="space-y-1 text-[13px] text-muted">
+                {prompt.action.suggested_targets.map((t) => (
+                  <li key={t} className="leading-snug">
+                    · {t}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <div className="text-[11px] uppercase tracking-wider text-muted mb-1.5">
+                Evidence
+              </div>
+              <ul className="space-y-1 text-[13px] text-muted">
+                {prompt.action.evidence_signals.map((s) => (
+                  <li key={s} className="leading-snug">
+                    · {s}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Stat({
+  label,
+  value,
+  sub,
+  accent,
+}: {
+  label: string;
+  value: string;
+  sub?: string;
+  accent?: "gain";
+}) {
+  return (
+    <div className="rounded-lg bg-white border border-line p-3.5">
+      <div className="text-[11px] uppercase tracking-wider text-muted">
+        {label}
+      </div>
+      <div
+        className={`mt-1 text-[18px] font-semibold tracking-tight tabular-nums leading-tight ${
+          accent === "gain" ? "text-gain" : ""
+        }`}
+      >
+        {value}
+      </div>
+      {sub && (
+        <div className="mt-0.5 text-[12px] text-muted leading-snug">{sub}</div>
+      )}
+    </div>
   );
 }
 
@@ -513,21 +605,21 @@ function CTA() {
         className="px-5 h-12 rounded-xl bg-white border border-line text-[15px] font-medium hover:bg-canvas transition flex items-center justify-center gap-2"
       >
         <Download className="w-4 h-4" />
-        Report exportieren
+        Export report
       </button>
       <Link
         href="/content-plan"
         className="px-5 h-12 rounded-xl bg-white border border-line text-[15px] font-medium hover:bg-canvas transition flex items-center justify-center gap-2 group"
       >
         <CalendarRange className="w-4 h-4" />
-        Content-Plan erstellen
+        Create content plan
         <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
       </Link>
       <Link
         href="/"
         className="px-6 h-12 rounded-xl bg-ink text-white text-[15px] font-medium flex items-center justify-center gap-2 hover:bg-ink/90 transition group"
       >
-        Neue Analyse starten
+        Start new analysis
         <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
       </Link>
     </motion.div>

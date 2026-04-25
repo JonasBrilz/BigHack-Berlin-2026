@@ -14,9 +14,17 @@ export type Competitor = {
 export type PromptRevenue = {
   prompt_id: string;
   prompt_message: string;
+  volume_source: string;
+  search_volume: number;
+  volume_source_urls: string[];
   your_visibility: number;
+  your_position: number;
+  top_competitor_visibility: number;
   top_competitor_name: string;
+  annual_mentions: number;
   current_annual_revenue_eur: number;
+  target_visibility: number;
+  target_position: number;
   target_annual_revenue_eur: number;
   revenue_lift_eur: number;
 };
@@ -81,4 +89,15 @@ export function competitorsRanked(): Competitor[] {
   return [...data.competitive_landscape].sort(
     (a, b) => b.prompts_won_against_you - a.prompts_won_against_you
   );
+}
+
+export type PromptDetail = PromptRevenue & {
+  action: TopAction | null;
+};
+
+export function allPromptsByLift(): PromptDetail[] {
+  const actionsById = new Map(data.top_actions.map((a) => [a.prompt_id, a]));
+  return [...data.prompt_revenues]
+    .sort((a, b) => b.revenue_lift_eur - a.revenue_lift_eur)
+    .map((p) => ({ ...p, action: actionsById.get(p.prompt_id) ?? null }));
 }
