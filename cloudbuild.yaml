@@ -8,7 +8,6 @@ steps:
       - -c
       - |
         gsutil -m cp -r gs://bighack-berlin-build-cache/node_modules . || true
-        gsutil -m cp -r gs://bighack-berlin-build-cache/.next-cache ./.next || true
 
   - name: node:22-alpine
     entrypoint: sh
@@ -28,15 +27,12 @@ steps:
       - -c
       - |
         gsutil -m cp -r ./node_modules gs://bighack-berlin-build-cache/node_modules || true
-        gsutil -m cp -r ./.next/cache gs://bighack-berlin-build-cache/.next-cache || true
 
-  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
-    entrypoint: gcloud
+  - name: gcr.io/cloud-builders/gsutil
     args:
-      - run
-      - deploy
-      - bighack-berlin
-      - --source=.
-      - --region=europe-west1
-      - --platform=managed
-      - --allow-unauthenticated
+      - -m
+      - rsync
+      - -r
+      - -d
+      - ./out
+      - gs://trackwinner-lol
