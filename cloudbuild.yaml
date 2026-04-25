@@ -1,0 +1,20 @@
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args: ["build", "-t", "gcr.io/$PROJECT_ID/bighack-berlin", "."]
+
+  - name: gcr.io/cloud-builders/docker
+    args: ["push", "gcr.io/$PROJECT_ID/bighack-berlin"]
+
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - bighack-berlin
+      - --image=gcr.io/$PROJECT_ID/bighack-berlin
+      - --region=europe-west1
+      - --platform=managed
+      - --allow-unauthenticated
