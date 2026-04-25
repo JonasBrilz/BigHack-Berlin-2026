@@ -33,9 +33,9 @@ export type Offer = {
 };
 
 export const OFFER_FIGURES: Record<MediaId, Figures> = {
-  "marketsandmarkets": { cost: "€16.250", gain: "+€84.500", gainDelta: "+12,3%" },
-  "business-com":      { cost: "€10.800", gain: "+€42.800", gainDelta: "+6,1%" },
-  "technologyadvice":  { cost: "€8.200",  gain: "+€31.200", gainDelta: "+4,5%" },
+  "marketsandmarkets": { cost: "€16,250", gain: "+€84,500", gainDelta: "+12.3%" },
+  "business-com":      { cost: "€10,800", gain: "+€42,800", gainDelta: "+6.1%" },
+  "technologyadvice":  { cost: "€8,200",  gain: "+€31,200", gainDelta: "+4.5%" },
 };
 
 const SIMULATED_RESPONSE_MS = 3500;
@@ -61,7 +61,7 @@ export async function requestOffer(
   };
 }
 
-export type CardState = "estimate" | "sending" | "received";
+export type CardState = "estimate" | "sending" | "received" | "accepted";
 
 export const STORAGE_KEY = "peec.paidmedia.state.v1";
 export const CONTEXT_KEY = "peec.offer.context.v1";

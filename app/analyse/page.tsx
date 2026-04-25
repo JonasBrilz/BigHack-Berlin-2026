@@ -18,42 +18,42 @@ type StepState = "pending" | "active" | "done";
 const NODES = [
   {
     id: "data",
-    title: "Datenerfassung",
-    desc: "Wir sammeln alle relevanten Geschäftsdaten — Umsätze, Kosten, Marktposition.",
+    title: "Data capture",
+    desc: "We pull together all relevant business data — revenue, costs, market position.",
     icon: Database,
   },
   {
     id: "analysis",
-    title: "Markt-Analyse",
-    desc: "Vergleich mit Wettbewerbern und Identifikation von Optimierungspotenzialen.",
+    title: "Market analysis",
+    desc: "Benchmarked against competitors and scanned for optimization potential.",
     icon: TrendingUp,
   },
   {
     id: "calc",
-    title: "Verpasstes Potenzial",
-    desc: "Berechnung des Umsatzes, den du gerade liegen lässt — basierend auf identifizierten Hebeln.",
+    title: "Untapped potential",
+    desc: "We compute the revenue you’re leaving on the table, lever by lever.",
     icon: Calculator,
   },
 ];
 
 const THINKING_PER_NODE: string[][] = [
   [
-    "Analyse wird verarbeitet…",
-    "Geschäftsdaten werden eingelesen…",
-    "Historische Umsätze gefiltert…",
-    "Kostenstruktur kategorisiert…",
+    "Processing analysis…",
+    "Ingesting business data…",
+    "Filtering historical revenue…",
+    "Classifying cost structure…",
   ],
   [
-    "Wettbewerber identifiziert…",
-    "Marktpreise werden recherchiert…",
-    "Positionierung wird gemappt…",
-    "Sichtbarkeits-Score berechnet…",
+    "Identifying competitors…",
+    "Pulling market pricing…",
+    "Mapping positioning…",
+    "Computing visibility score…",
   ],
   [
-    "Margen-Lücken werden quantifiziert…",
-    "Verpasste Umsätze werden berechnet…",
-    "Optimierungs-Hebel werden bewertet…",
-    "Empfehlungen werden festgestellt…",
+    "Quantifying margin gaps…",
+    "Calculating missed revenue…",
+    "Scoring optimization levers…",
+    "Finalizing recommendations…",
   ],
 ];
 
@@ -87,7 +87,7 @@ export default function AnalysePage() {
           return 0;
         } else {
           clearInterval(timer);
-          setTimeout(() => router.push("/auswertung"), 1200);
+          setTimeout(() => router.push("/report"), 1200);
           return prev;
         }
       });
@@ -120,13 +120,13 @@ export default function AnalysePage() {
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-line bg-white text-[13px] mb-5">
             <Loader2 className="w-3.5 h-3.5 animate-spin" />
-            Analyse läuft
+            Analysis running
           </div>
           <h1 className="text-[clamp(2rem,5vw,3.5rem)] font-semibold tracking-[-0.03em] leading-[1.05]">
-            Wir verstehen <span className="text-muted">dein Unternehmen</span>
+            We&apos;re understanding <span className="text-muted">your company</span>
           </h1>
           <p className="mt-4 text-[16px] text-muted max-w-xl mx-auto">
-            Drei Schritte. Ein Ziel: Identifizieren, wo dein Profit-Potenzial schlummert.
+            Three steps. One goal: surface where your profit potential is hiding.
           </p>
         </motion.div>
 
@@ -218,10 +218,10 @@ export default function AnalysePage() {
                         </h3>
                         <span className="text-[12px] text-muted">
                           {state === "done"
-                            ? "Fertig"
+                            ? "Done"
                             : state === "active"
-                            ? "Läuft…"
-                            : "Wartet"}
+                            ? "Running…"
+                            : "Pending"}
                         </span>
                       </div>
                       <p className="text-[14px] text-muted mt-1 leading-relaxed">
@@ -241,11 +241,11 @@ export default function AnalysePage() {
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
                   <span className="text-[13px] font-medium uppercase tracking-wider text-muted">
-                    Live Thinking
+                    Live thinking
                   </span>
                 </div>
                 <span className="text-[12px] text-muted">
-                  Schritt {activeNode + 1} / {NODES.length}
+                  Step {activeNode + 1} / {NODES.length}
                 </span>
               </div>
 
@@ -286,7 +286,7 @@ export default function AnalysePage() {
 
               <div className="mt-7 pt-5 border-t border-line">
                 <div className="flex items-center justify-between text-[12px] text-muted">
-                  <span>Prozessfortschritt</span>
+                  <span>Progress</span>
                   <span>
                     {Math.round(
                       ((doneNodes.length +
@@ -318,7 +318,7 @@ export default function AnalysePage() {
 
             <div className="mt-4 text-center text-[12px] text-muted flex items-center justify-center gap-2">
               <ArrowRight className="w-3 h-3" />
-              Auswertung wird automatisch geöffnet
+              Report opens automatically
             </div>
           </div>
         </div>

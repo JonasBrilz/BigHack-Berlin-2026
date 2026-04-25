@@ -13,6 +13,7 @@ export default {
         muted: "#8a8a8a",
         line: "#e5e5e2",
         accent: "#dc2626",
+        gain: "#16a34a",
       },
       fontFamily: {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],

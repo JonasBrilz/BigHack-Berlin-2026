@@ -16,12 +16,12 @@ import {
 } from "lucide-react";
 import BrandMark from "@/components/BrandMark";
 
-type Channel = "Blog" | "LinkedIn" | "E-Mail" | "Video" | "Paid Ads";
+type Channel = "Blog" | "LinkedIn" | "Email" | "Video" | "Paid Ads";
 
 const CHANNEL_ICON: Record<Channel, React.ReactNode> = {
   Blog: <PenLine className="w-3.5 h-3.5" />,
   LinkedIn: <Linkedin className="w-3.5 h-3.5" />,
-  "E-Mail": <Mail className="w-3.5 h-3.5" />,
+  Email: <Mail className="w-3.5 h-3.5" />,
   Video: <Video className="w-3.5 h-3.5" />,
   "Paid Ads": <Megaphone className="w-3.5 h-3.5" />,
 };
@@ -31,67 +31,69 @@ type PlanItem = {
   title: string;
   channel: Channel;
   goal: string;
-  hebel: string;
+  lever: string;
 };
 
 const PLAN: PlanItem[] = [
   {
-    week: "Woche 1",
-    title: "Launch-Story: Pricing-Update transparent erklärt",
+    week: "Week 1",
+    title: "Launch story: pricing update, transparently explained",
     channel: "Blog",
     goal: "Awareness · Trust",
-    hebel: "Pricing",
+    lever: "Pricing",
   },
   {
-    week: "Woche 1",
-    title: "Founder-Post: Warum wir unsere Preise anpassen",
+    week: "Week 1",
+    title: "Founder post: why we’re adjusting our prices",
     channel: "LinkedIn",
     goal: "Reach · Reputation",
-    hebel: "Pricing",
+    lever: "Pricing",
   },
   {
-    week: "Woche 2",
-    title: "Case Study: 12% Margen-Lift in 6 Wochen",
+    week: "Week 2",
+    title: "Case study: 12% margin lift in 6 weeks",
     channel: "Blog",
     goal: "Conversion · Proof",
-    hebel: "Pricing",
+    lever: "Pricing",
   },
   {
-    week: "Woche 2",
-    title: "VIP-Mailing an Top-23%-Segment",
-    channel: "E-Mail",
+    week: "Week 2",
+    title: "VIP mailing to top-23% segment",
+    channel: "Email",
     goal: "Upsell",
-    hebel: "Segmentierung",
+    lever: "Segmentation",
   },
   {
-    week: "Woche 3",
-    title: "Re-Targeting auf High-ROAS-Kanälen",
+    week: "Week 3",
+    title: "Re-targeting on high-ROAS channels",
     channel: "Paid Ads",
     goal: "Performance",
-    hebel: "Kosten",
+    lever: "Cost",
   },
   {
-    week: "Woche 3",
-    title: "60s-Video: Drei-Schritt-Hebel erklärt",
+    week: "Week 3",
+    title: "60s video: three-step lever explained",
     channel: "Video",
     goal: "Engagement",
-    hebel: "Brand",
+    lever: "Brand",
   },
   {
-    week: "Woche 4",
-    title: "Quartalsabschluss-Newsletter mit Insights",
-    channel: "E-Mail",
+    week: "Week 4",
+    title: "End-of-quarter newsletter with insights",
+    channel: "Email",
     goal: "Retention",
-    hebel: "Segmentierung",
+    lever: "Segmentation",
   },
   {
-    week: "Woche 4",
-    title: "LinkedIn-Carousel: 5 Lessons Learned",
+    week: "Week 4",
+    title: "LinkedIn carousel: 5 lessons learned",
     channel: "LinkedIn",
     goal: "Reach",
-    hebel: "Brand",
+    lever: "Brand",
   },
 ];
+
+const WEEKS = ["Week 1", "Week 2", "Week 3", "Week 4"];
 
 export default function ContentPlanPage() {
   return (
@@ -113,7 +115,7 @@ export default function ContentPlanPage() {
           className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-line bg-white text-[13px] mb-8"
         >
           <CalendarRange className="w-3.5 h-3.5" />
-          Content-Plan · Auto-generiert
+          Content plan · auto-generated
         </motion.div>
 
         <div className="grid lg:grid-cols-12 gap-10 mb-14">
@@ -124,9 +126,9 @@ export default function ContentPlanPage() {
             className="lg:col-span-7"
           >
             <h1 className="text-[clamp(2.5rem,6.5vw,4.75rem)] font-semibold tracking-[-0.04em] leading-[1.02]">
-              Deine 4-Wochen-
+              Your 4-week
               <br />
-              <span className="text-muted">Kampagne</span>
+              <span className="text-muted">campaign</span>
             </h1>
           </motion.div>
 
@@ -137,29 +139,28 @@ export default function ContentPlanPage() {
             className="lg:col-span-5 flex flex-col justify-end"
           >
             <p className="text-[17px] text-muted leading-relaxed">
-              Auf Basis deiner Profit-Analyse haben wir eine durchgeplante
-              Kampagne erstellt — Channels, Themen, Ziele und welcher Hebel
-              damit aktiviert wird.
+              Based on your profit analysis we&apos;ve mapped out a campaign —
+              channels, topics, goals, and which lever each post activates.
             </p>
           </motion.div>
         </div>
 
-        {/* Quick Stats */}
+        {/* Quick stats */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
           className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10"
         >
-          <Stat label="Beiträge" value="8" />
+          <Stat label="Posts" value="8" />
           <Stat label="Channels" value="5" />
-          <Stat label="Wochen" value="4" />
-          <Stat label="Erwarteter Lift" value="+18%" highlight />
+          <Stat label="Weeks" value="4" />
+          <Stat label="Expected lift" value="+18%" highlight />
         </motion.div>
 
-        {/* Plan Cards by Week */}
+        {/* Plan cards by week */}
         <div className="space-y-8">
-          {["Woche 1", "Woche 2", "Woche 3", "Woche 4"].map((wk, wIdx) => (
+          {WEEKS.map((wk, wIdx) => (
             <motion.div
               key={wk}
               initial={{ opacity: 0, y: 12 }}
@@ -175,7 +176,7 @@ export default function ContentPlanPage() {
                 </h2>
                 <div className="flex-1 border-t border-line" />
                 <span className="text-[12px] text-muted">
-                  {PLAN.filter((p) => p.week === wk).length} Beiträge
+                  {PLAN.filter((p) => p.week === wk).length} posts
                 </span>
               </div>
 
@@ -191,7 +192,7 @@ export default function ContentPlanPage() {
                         {item.channel}
                       </span>
                       <span className="text-[11px] px-2 py-0.5 rounded-full border border-ink/15 bg-ink/5 text-ink">
-                        Hebel: {item.hebel}
+                        Lever: {item.lever}
                       </span>
                     </div>
                     <h3 className="text-[16px] font-semibold tracking-tight leading-snug mb-2">
@@ -199,7 +200,7 @@ export default function ContentPlanPage() {
                     </h3>
                     <div className="flex items-center gap-2 text-[12px] text-muted">
                       <Search className="w-3 h-3" />
-                      <span>Ziel: {item.goal}</span>
+                      <span>Goal: {item.goal}</span>
                     </div>
                   </div>
                 ))}
@@ -223,20 +224,20 @@ export default function ContentPlanPage() {
                 Outcome
               </div>
               <h3 className="text-[24px] font-semibold tracking-[-0.02em] leading-tight">
-                Diese Kampagne aktiviert alle drei identifizierten Hebel und
-                soll das verpasste Potenzial in <strong>~6 Wochen</strong>{" "}
-                operativ heben.
+                This campaign activates all three identified levers and turns
+                the untapped potential into revenue in{" "}
+                <strong>~6 weeks</strong>.
               </h3>
             </div>
             <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
               <div className="text-[11px] uppercase tracking-wider text-white/50">
-                Erwartete Wirkung
+                Expected impact
               </div>
-              <div className="text-[40px] font-semibold tracking-tight mt-1 leading-none">
+              <div className="text-[40px] font-semibold tracking-tight mt-1 leading-none text-gain">
                 +€95k
               </div>
               <div className="text-[12px] text-white/60 mt-2">
-                in den ersten 90 Tagen
+                in the first 90 days
               </div>
             </div>
           </div>
@@ -254,19 +255,19 @@ export default function ContentPlanPage() {
             className="px-5 h-12 rounded-xl bg-white border border-line text-[15px] font-medium hover:bg-canvas transition flex items-center justify-center gap-2"
           >
             <Download className="w-4 h-4" />
-            Plan exportieren
+            Export plan
           </button>
           <Link
-            href="/auswertung"
+            href="/report"
             className="px-5 h-12 rounded-xl bg-white border border-line text-[15px] font-medium hover:bg-canvas transition flex items-center justify-center gap-2"
           >
-            Zurück zur Auswertung
+            Back to report
           </Link>
           <Link
-            href="/"
+            href="/home"
             className="px-6 h-12 rounded-xl bg-ink text-white text-[15px] font-medium flex items-center justify-center gap-2 hover:bg-ink/90 transition group"
           >
-            Neue Analyse starten
+            Start new analysis
             <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </motion.div>
@@ -287,13 +288,17 @@ function Stat({
   return (
     <div
       className={`rounded-2xl bg-white border p-5 ${
-        highlight ? "border-l-[3px] border-l-accent border-y-line border-r-line" : "border-line"
+        highlight ? "border-l-[3px] border-l-gain border-y-line border-r-line" : "border-line"
       }`}
     >
       <div className="text-[12px] uppercase tracking-wider text-muted">
         {label}
       </div>
-      <div className="text-[28px] font-semibold tracking-tight mt-1">
+      <div
+        className={`text-[28px] font-semibold tracking-tight mt-1 ${
+          highlight ? "text-gain" : ""
+        }`}
+      >
         {value}
       </div>
     </div>
