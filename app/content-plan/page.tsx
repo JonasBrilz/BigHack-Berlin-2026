@@ -96,7 +96,7 @@ const PLAN: PlanItem[] = [
 export default function ContentPlanPage() {
   return (
     <main className="min-h-screen flex flex-col">
-      <BrandMark className="fixed top-5 right-6 z-50" />
+      <BrandMark className="fixed top-5 left-6 z-50" />
 
       <div className="fixed inset-x-0 bottom-0 h-72 dot-grid opacity-40 pointer-events-none -z-10" />
 

@@ -95,7 +95,7 @@ export default function AnalysePage() {
 
   return (
     <main className="min-h-screen flex flex-col">
-      <BrandMark className="fixed top-5 right-6 z-50" />
+      <BrandMark className="fixed top-5 left-6 z-50" />
 
       <motion.section
         initial={{ opacity: 0 }}

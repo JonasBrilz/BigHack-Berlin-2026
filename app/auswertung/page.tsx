@@ -1,45 +1,75 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { useEffect, useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  TrendingUp,
   TrendingDown,
-  Target,
-  Zap,
   ArrowUpRight,
   ArrowRight,
   Sparkles,
   CheckCircle2,
   Download,
   CalendarRange,
+  Mail,
+  MailCheck,
+  Loader2,
+  Globe2,
+  Briefcase,
+  Cpu,
+  RotateCcw,
+  type LucideIcon,
 } from "lucide-react";
 import BrandMark from "@/components/BrandMark";
+import {
+  ANALYSIS_FLAG,
+  NOTIFY_EMAIL,
+  STORAGE_KEY,
+  loadContext,
+  requestOffer,
+  type CardState,
+  type Figures,
+  type MediaId,
+  type OfferContext,
+} from "@/lib/paidMedia";
 
-const HEBEL = [
+type Media = {
+  id: MediaId;
+  title: string;
+  domain: string;
+  audience: string;
+  icon: LucideIcon;
+  estimate: Figures;
+  partnerEmail: string;
+};
+
+const MEDIA: Media[] = [
   {
-    title: "Pricing-Optimierung",
-    impact: "+€84.500",
-    delta: "+12,3%",
-    desc: "Drei Produktlinien sind 8–14% unter Marktpreis. Eine sanfte Anpassung verändert die Conversion kaum, hebt aber die Marge deutlich.",
-    icon: TrendingUp,
-    confidence: "Hoch",
+    id: "marketsandmarkets",
+    title: "MarketsandMarkets",
+    domain: "marketsandmarkets.com",
+    audience: "B2B Tech Decision-Maker · 4,8M MAU",
+    icon: Globe2,
+    estimate: { cost: "ab €18.000", gain: "ab +€72.000", gainDelta: "+10,4%" },
+    partnerEmail: "partnerships@marketsandmarkets.com",
   },
   {
-    title: "Kosten-Reallokation",
-    impact: "+€42.800",
-    delta: "+6,1%",
-    desc: "Fixe Marketingausgaben fließen aktuell in Kanäle mit niedriger Sichtbarkeit. Umverteilung auf Top-Performer steigert ROAS.",
-    icon: Zap,
-    confidence: "Mittel",
+    id: "business-com",
+    title: "Business.com",
+    domain: "business.com",
+    audience: "SMB-Buyer · 3,1M MAU",
+    icon: Briefcase,
+    estimate: { cost: "ab €12.000", gain: "ab +€32.000", gainDelta: "+4,6%" },
+    partnerEmail: "partners@business.com",
   },
   {
-    title: "Kundensegmentierung",
-    impact: "+€31.200",
-    delta: "+4,5%",
-    desc: "23% der Kunden bringen 71% des Umsatzes. Gezieltes Upselling im Top-Segment verspricht das größte Wachstum.",
-    icon: Target,
-    confidence: "Hoch",
+    id: "technologyadvice",
+    title: "TechnologyAdvice",
+    domain: "technologyadvice.com",
+    audience: "IT- & SaaS-Buyer · 1,9M MAU",
+    icon: Cpu,
+    estimate: { cost: "ab €9.500", gain: "ab +€24.000", gainDelta: "+3,5%" },
+    partnerEmail: "media@technologyadvice.com",
   },
 ];
 
@@ -49,10 +79,100 @@ const RISKS = [
   "Lagerbestand für Top-Produkt nur 14 Tage",
 ];
 
+type CardData = {
+  state: CardState;
+  offer?: Figures;
+};
+
+type StateMap = Record<MediaId, CardData>;
+
+const initialStateMap = (): StateMap =>
+  MEDIA.reduce<StateMap>((acc, m) => {
+    acc[m.id] = { state: "estimate" };
+    return acc;
+  }, {} as StateMap);
+
 export default function AuswertungPage() {
+  const [states, setStates] = useState<StateMap>(initialStateMap);
+  const [context, setContext] = useState<OfferContext | undefined>(undefined);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as Partial<StateMap>;
+        setStates({ ...initialStateMap(), ...parsed });
+      }
+      setContext(loadContext());
+      localStorage.setItem(ANALYSIS_FLAG, "1");
+    } catch {
+      /* noop */
+    }
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(states));
+    } catch {
+      /* noop */
+    }
+  }, [states, hydrated]);
+
+  const setCard = (id: MediaId, next: CardData) =>
+    setStates((s) => ({ ...s, [id]: next }));
+
+  const handleSend = async (m: Media) => {
+    const subject = `Angebotsanfrage Paid Media · ${m.title}`;
+    const body =
+      `Hallo ${m.title} Team,\n\n` +
+      `wir haben über Peec AI unser Paid-Media-Potenzial analysiert und möchten ` +
+      `eine konkrete Q-Platzierung auf ${m.domain} prüfen.\n\n` +
+      `• Geschätztes Budget: ${m.estimate.cost} / Quartal\n` +
+      `• Erwarteter Revenue Gain: ${m.estimate.gain} / Jahr\n\n` +
+      `Bitte sendet eure aktuellen Konditionen sowie verfügbare Slots an ${NOTIFY_EMAIL}.\n\n` +
+      `Beste Grüße\n` +
+      `Peec AI · Profit Analysis`;
+
+    const mailto =
+      `mailto:${m.partnerEmail}` +
+      `?cc=${encodeURIComponent(NOTIFY_EMAIL)}` +
+      `&subject=${encodeURIComponent(subject)}` +
+      `&body=${encodeURIComponent(body)}`;
+
+    window.open(mailto, "_self");
+    setCard(m.id, { state: "sending" });
+
+    try {
+      const offer = await requestOffer(m.id, context);
+      setCard(m.id, { state: "received", offer: offer.figures });
+    } catch {
+      setCard(m.id, { state: "estimate" });
+    }
+  };
+
+  const handleReset = (id: MediaId) => setCard(id, { state: "estimate" });
+
+  const totalGain = useMemo(() => {
+    return MEDIA.reduce((sum, m) => {
+      const card = states[m.id];
+      const figures = card?.state === "received" && card.offer
+        ? card.offer
+        : m.estimate;
+      return sum + parseGain(figures.gain);
+    }, 0);
+  }, [states]);
+
+  const anyReceived = useMemo(
+    () => MEDIA.some((m) => states[m.id]?.state === "received"),
+    [states]
+  );
+
   return (
     <main className="min-h-screen flex flex-col">
-      <BrandMark className="fixed top-5 right-6 z-50 no-print" />
+      <BrandMark className="fixed top-5 left-6 z-50 no-print" />
 
       <motion.section
         initial={{ opacity: 0, y: 20 }}
@@ -93,12 +213,15 @@ export default function AuswertungPage() {
                 Zusätzliches Umsatzpotenzial / Jahr
               </div>
               <div className="text-[clamp(3rem,9vw,6rem)] font-semibold tracking-[-0.04em] leading-none">
-                +€158.500
+                {anyReceived ? "+" : "ab +"}€{formatThousands(totalGain)}
               </div>
               <div className="mt-5 text-[16px] text-white/70 leading-relaxed">
-                Wenn alle drei Hebel umgesetzt werden, kann dein Unternehmen den
-                Jahresumsatz um <strong className="text-white">22,9%</strong> steigern —
-                bei nahezu unverändertem Kostenblock.
+                Wenn du alle drei Paid-Media-Platzierungen aktivierst, kann dein
+                Unternehmen den Jahresumsatz um{" "}
+                <strong className="text-white">
+                  {anyReceived ? "22,9%" : "18,5%"}
+                </strong>{" "}
+                steigern — bei nahezu unverändertem Kostenblock.
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -110,7 +233,7 @@ export default function AuswertungPage() {
           </div>
         </motion.div>
 
-        {/* Hebel */}
+        {/* Paid Media */}
         <div className="mb-12">
           <motion.div
             initial={{ opacity: 0, y: 8 }}
@@ -120,58 +243,26 @@ export default function AuswertungPage() {
           >
             <div>
               <h2 className="text-[28px] font-semibold tracking-[-0.02em]">
-                Drei konkrete Hebel
+                Drei Paid-Media-Platzierungen
               </h2>
               <p className="text-muted text-[15px] mt-1">
-                Priorisiert nach Impact und Umsetzbarkeit.
+                Frag direkt ein Angebot an — die Zahlen werden eingepflegt,
+                sobald die Antwort da ist.
               </p>
             </div>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-4">
-            {HEBEL.map((h, i) => {
-              const Icon = h.icon;
-              return (
-                <motion.div
-                  key={h.title}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.4 + i * 0.08 }}
-                  className="group rounded-2xl bg-white border border-line p-6 hover:border-ink/30 transition-colors"
-                >
-                  <div className="flex items-start justify-between mb-5">
-                    <div className="w-11 h-11 rounded-xl bg-canvas flex items-center justify-center">
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <span
-                      className={`text-[11px] px-2 py-0.5 rounded-full border ${
-                        h.confidence === "Hoch"
-                          ? "border-ink/20 bg-ink/5 text-ink"
-                          : "border-line bg-canvas text-muted"
-                      }`}
-                    >
-                      {h.confidence}
-                    </span>
-                  </div>
-                  <div className="text-[13px] text-muted mb-1">#{i + 1} Hebel</div>
-                  <h3 className="text-[20px] font-semibold tracking-tight mb-3">
-                    {h.title}
-                  </h3>
-                  <div className="flex items-baseline gap-2 mb-4">
-                    <span className="text-[28px] font-semibold tracking-tight">
-                      {h.impact}
-                    </span>
-                    <span className="text-[13px] text-accent font-medium flex items-center">
-                      <ArrowUpRight className="w-3.5 h-3.5" />
-                      {h.delta}
-                    </span>
-                  </div>
-                  <p className="text-[14px] text-muted leading-relaxed">
-                    {h.desc}
-                  </p>
-                </motion.div>
-              );
-            })}
+          <div className="grid md:grid-cols-3 gap-5">
+            {MEDIA.map((m, i) => (
+              <MediaCard
+                key={m.id}
+                media={m}
+                index={i}
+                card={states[m.id] ?? { state: "estimate" }}
+                onSend={() => handleSend(m)}
+                onReset={() => handleReset(m.id)}
+              />
+            ))}
           </div>
         </div>
 
@@ -235,6 +326,166 @@ export default function AuswertungPage() {
   );
 }
 
+function MediaCard({
+  media,
+  index,
+  card,
+  onSend,
+  onReset,
+}: {
+  media: Media;
+  index: number;
+  card: CardData;
+  onSend: () => void;
+  onReset: () => void;
+}) {
+  const Icon = media.icon;
+  const showOffer = card.state === "received" && !!card.offer;
+  const figures = showOffer && card.offer ? card.offer : media.estimate;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.4 + index * 0.08 }}
+      className={`group rounded-2xl bg-white border p-6 flex flex-col transition-colors ${
+        showOffer
+          ? "border-ink/40 shadow-[0_2px_24px_-12px_rgba(0,0,0,0.18)]"
+          : "border-line hover:border-ink/30"
+      }`}
+    >
+      <div className="flex items-start justify-between mb-5">
+        <div className="w-11 h-11 rounded-xl bg-canvas flex items-center justify-center">
+          <Icon className="w-5 h-5" />
+        </div>
+        <span
+          className={`text-[11px] px-2 py-0.5 rounded-full border whitespace-nowrap transition-colors ${
+            showOffer
+              ? "border-ink/20 bg-ink/5 text-ink"
+              : "border-line bg-canvas text-muted"
+          }`}
+        >
+          {showOffer ? "Angebot" : "Schätzwert"}
+        </span>
+      </div>
+
+      <div className="text-[12px] text-muted mb-1">#{index + 1} Paid Media</div>
+      <h3 className="text-[20px] font-semibold tracking-tight leading-tight">
+        {media.title}
+      </h3>
+      <div className="text-[13px] text-muted mt-0.5 truncate">{media.domain}</div>
+      <div className="text-[12px] text-muted mt-2 leading-snug">
+        {media.audience}
+      </div>
+
+      <div className="mt-5 space-y-2.5">
+        <FigureRow
+          label="Geschätzte Kosten"
+          value={figures.cost}
+          sub="/ Quartal"
+        />
+        <FigureRow
+          label="Revenue Gain"
+          value={figures.gain}
+          sub="/ Jahr"
+          delta={figures.gainDelta}
+        />
+      </div>
+
+      <div className="mt-6 pt-5 border-t border-line">
+        <AnimatePresence mode="wait" initial={false}>
+          {card.state === "estimate" && (
+            <motion.button
+              key="estimate"
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2 }}
+              onClick={onSend}
+              className="w-full h-11 rounded-xl bg-ink text-white text-[14px] font-medium flex items-center justify-center gap-2 hover:bg-ink/90 transition"
+            >
+              <Mail className="w-4 h-4" />
+              Angebot anfragen
+            </motion.button>
+          )}
+
+          {card.state === "sending" && (
+            <motion.div
+              key="sending"
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2 }}
+              className="w-full h-11 rounded-xl bg-canvas border border-line text-[13px] text-muted flex items-center justify-center gap-2"
+            >
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Anfrage gesendet · Warten auf Antwort
+            </motion.div>
+          )}
+
+          {card.state === "received" && (
+            <motion.div
+              key="received"
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2 }}
+              className="flex items-center justify-between gap-2"
+            >
+              <span className="inline-flex items-center gap-1.5 text-[13px] text-ink">
+                <MailCheck className="w-4 h-4 text-accent" />
+                Antwort eingepflegt
+              </span>
+              <button
+                onClick={onReset}
+                className="inline-flex items-center gap-1 text-[12px] text-muted hover:text-ink transition"
+                title="Erneut anfragen"
+              >
+                <RotateCcw className="w-3 h-3" />
+                neu anfragen
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </motion.div>
+  );
+}
+
+function FigureRow({
+  label,
+  value,
+  sub,
+  delta,
+}: {
+  label: string;
+  value: string;
+  sub: string;
+  delta?: string;
+}) {
+  return (
+    <div className="rounded-xl bg-canvas border border-line px-3.5 py-3 flex items-baseline justify-between gap-3">
+      <div className="min-w-0">
+        <div className="text-[11px] uppercase tracking-wider text-muted">
+          {label}
+        </div>
+        <div className="mt-0.5 text-[18px] font-semibold tracking-tight leading-tight truncate">
+          {value}
+        </div>
+      </div>
+      <div className="flex items-baseline gap-1.5 text-[11px] text-muted whitespace-nowrap">
+        <span>{sub}</span>
+        {delta && (
+          <span className="inline-flex items-center text-accent font-medium">
+            <ArrowUpRight className="w-3 h-3" />
+            {delta}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function Stat({
   label,
   value,
@@ -255,4 +506,13 @@ function Stat({
       <div className="text-[12px] text-white/50 mt-0.5">{sub}</div>
     </div>
   );
+}
+
+function parseGain(s: string): number {
+  const cleaned = s.replace(/[^\d]/g, "");
+  return cleaned ? parseInt(cleaned, 10) : 0;
+}
+
+function formatThousands(n: number): string {
+  return n.toLocaleString("de-DE");
 }

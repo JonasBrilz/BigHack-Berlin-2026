@@ -13,9 +13,15 @@ import {
   Database,
   Plug,
   Info,
+  History,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
+import {
+  ANALYSIS_FLAG,
+  VORJAHRES_ARPU,
+  saveContext,
+} from "@/lib/paidMedia";
 
 type RateMode = "standard" | "manual" | "crm";
 
@@ -27,6 +33,29 @@ export default function HomePage() {
   const [mode, setMode] = useState<RateMode>("standard");
   const [visitToLead, setVisitToLead] = useState<string>("");
   const [leadToCustomer, setLeadToCustomer] = useState<string>("");
+  const [arpu, setArpu] = useState<string>("");
+  const [hasAnalysis, setHasAnalysis] = useState(false);
+
+  useEffect(() => {
+    try {
+      setHasAnalysis(localStorage.getItem(ANALYSIS_FLAG) === "1");
+    } catch {
+      /* noop */
+    }
+  }, []);
+
+  useEffect(() => {
+    const v2l = mode === "manual" ? parseFloat(visitToLead) : STANDARD_VISIT_TO_LEAD;
+    const l2c = mode === "manual" ? parseFloat(leadToCustomer) : STANDARD_LEAD_TO_CUSTOMER;
+    const arpuNum = parseFloat(arpu);
+    saveContext({
+      visitToLead: Number.isFinite(v2l) ? v2l : STANDARD_VISIT_TO_LEAD,
+      leadToCustomer: Number.isFinite(l2c) ? l2c : STANDARD_LEAD_TO_CUSTOMER,
+      avgRevenuePerCustomer: Number.isFinite(arpuNum) && arpuNum > 0
+        ? arpuNum
+        : VORJAHRES_ARPU,
+    });
+  }, [mode, visitToLead, leadToCustomer, arpu]);
 
   return (
     <main className="min-h-screen flex flex-col">
@@ -211,6 +240,44 @@ export default function HomePage() {
               </motion.div>
             )}
           </AnimatePresence>
+
+          <div className="mt-5 pt-5 border-t border-line">
+            <div className="flex items-end justify-between gap-4 flex-wrap">
+              <div className="min-w-0">
+                <label
+                  htmlFor="arpu"
+                  className="text-[13px] text-muted block"
+                >
+                  Average Revenue per Customer
+                  <span className="ml-1.5 text-[11px] uppercase tracking-wider text-muted/70">
+                    optional
+                  </span>
+                </label>
+                <p className="text-[12px] text-muted/80 mt-0.5">
+                  Wenn leer, ziehen wir den Vorjahreswert (€{VORJAHRES_ARPU.toLocaleString("de-DE")}).
+                </p>
+              </div>
+              <div className="relative w-full sm:w-56">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[14px] text-muted pointer-events-none">
+                  €
+                </span>
+                <input
+                  id="arpu"
+                  type="number"
+                  inputMode="decimal"
+                  min="0"
+                  step="1"
+                  placeholder={`${VORJAHRES_ARPU} (Vorjahr)`}
+                  value={arpu}
+                  onChange={(e) => setArpu(e.target.value)}
+                  className="w-full h-11 pl-7 pr-12 rounded-xl bg-white border border-line text-[15px] focus:outline-none focus:border-ink/40 transition"
+                />
+                <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[12px] text-muted pointer-events-none">
+                  / Jahr
+                </span>
+              </div>
+            </div>
+          </div>
         </motion.div>
 
         <motion.div
@@ -219,22 +286,34 @@ export default function HomePage() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="mt-10 flex flex-col sm:flex-row gap-3 relative z-10"
         >
-          <motion.button
-            onClick={() => {
-              setShake(true);
-              setTimeout(() => setShake(false), 500);
-            }}
-            animate={shake ? { x: [0, -6, 6, -4, 4, 0] } : {}}
-            transition={{ duration: 0.4 }}
-            className="group px-5 h-12 rounded-xl bg-white border border-line text-[15px] font-medium flex items-center gap-2 cursor-not-allowed hover:border-line/80 transition relative"
-            title="Keine vorherige Analyse gefunden"
-          >
-            <XCircle className="w-4 h-4 text-muted group-hover:text-accent transition-colors" />
-            Analyse fortsetzen
-            <span className="absolute -top-2 -right-2 px-1.5 py-0.5 rounded-full bg-canvas border border-line text-[10px] text-muted opacity-0 group-hover:opacity-100 transition">
-              keine vorhanden
-            </span>
-          </motion.button>
+          {hasAnalysis ? (
+            <Link
+              href="/auswertung"
+              className="group px-5 h-12 rounded-xl bg-white border border-line text-[15px] font-medium flex items-center gap-2 hover:border-ink/40 transition relative"
+              title="Letzte Analyse öffnen"
+            >
+              <History className="w-4 h-4 text-muted group-hover:text-ink transition-colors" />
+              Analyse fortsetzen
+              <ArrowRight className="w-4 h-4 text-muted group-hover:text-ink group-hover:translate-x-0.5 transition" />
+            </Link>
+          ) : (
+            <motion.button
+              onClick={() => {
+                setShake(true);
+                setTimeout(() => setShake(false), 500);
+              }}
+              animate={shake ? { x: [0, -6, 6, -4, 4, 0] } : {}}
+              transition={{ duration: 0.4 }}
+              className="group px-5 h-12 rounded-xl bg-white border border-line text-[15px] font-medium flex items-center gap-2 cursor-not-allowed hover:border-line/80 transition relative"
+              title="Keine vorherige Analyse gefunden"
+            >
+              <XCircle className="w-4 h-4 text-muted group-hover:text-accent transition-colors" />
+              Analyse fortsetzen
+              <span className="absolute -top-2 -right-2 px-1.5 py-0.5 rounded-full bg-canvas border border-line text-[10px] text-muted opacity-0 group-hover:opacity-100 transition">
+                keine vorhanden
+              </span>
+            </motion.button>
+          )}
 
           <Link
             href="/analyse"
