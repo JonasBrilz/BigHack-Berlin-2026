@@ -253,9 +253,6 @@ export default function HomePage() {
                     optional
                   </span>
                 </label>
-                <p className="text-[12px] text-muted/80 mt-0.5">
-                  If empty, we use last year&apos;s value (€{VORJAHRES_ARPU.toLocaleString("en-US")}).
-                </p>
               </div>
               <div className="relative w-full sm:w-56">
                 <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[14px] text-muted pointer-events-none">
