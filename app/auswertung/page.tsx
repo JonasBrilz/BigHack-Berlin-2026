@@ -100,16 +100,11 @@ export default function AuswertungPage() {
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<StateMap>;
         const merged = { ...initialStateMap(), ...parsed };
-        // Demo flow: a sending card from a previous visit means the user
-        // already fired off a request and is now coming back via "Analyse
-        // fortsetzen" — flip it (and the rest) to received with the offer.
-        const hasPending = MEDIA.some(
-          (m) =>
-            merged[m.id]?.state === "sending" ||
-            merged[m.id]?.state === "received"
-        );
-        if (hasPending) {
-          for (const m of MEDIA) {
+        // On re-entry via "Analyse fortsetzen": any card the user sent a
+        // request for (state = sending) is now treated as answered. Cards
+        // the user did not contact stay in their estimate state.
+        for (const m of MEDIA) {
+          if (merged[m.id]?.state === "sending") {
             merged[m.id] = {
               state: "received",
               offer: OFFER_FIGURES[m.id],
