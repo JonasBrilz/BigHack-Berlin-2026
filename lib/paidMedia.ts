@@ -61,7 +61,7 @@ export async function requestOffer(
   };
 }
 
-export type CardState = "estimate" | "sending" | "received";
+export type CardState = "estimate" | "sending" | "received" | "accepted";
 
 export const STORAGE_KEY = "peec.paidmedia.state.v1";
 export const CONTEXT_KEY = "peec.offer.context.v1";

@@ -7,7 +7,7 @@ type BrandMarkProps = {
 export default function BrandMark({ className = "" }: BrandMarkProps) {
   return (
     <Link
-      href="/"
+      href="/home"
       className={`inline-flex items-center gap-3 ${className}`}
       aria-label="Back to home"
     >

@@ -97,6 +97,7 @@ const initialStateMap = (): StateMap =>
 export default function ReportPage() {
   const [paidMediaStates, setPaidMediaStates] = useState<StateMap>(initialStateMap);
   const [hydrated, setHydrated] = useState(false);
+  const [username, setUsername] = useState<string>(BRAND);
 
   useEffect(() => {
     try {
@@ -117,6 +118,8 @@ export default function ReportPage() {
         setPaidMediaStates(merged);
       }
       localStorage.setItem(ANALYSIS_FLAG, "1");
+      const stored = sessionStorage.getItem("peec.user");
+      if (stored && stored.trim()) setUsername(stored.trim());
     } catch {
       /* noop */
     }
@@ -159,6 +162,13 @@ export default function ReportPage() {
 
   const handleReset = (id: MediaId) => setCard(id, { state: "estimate" });
 
+  const handleAccept = (id: MediaId) =>
+    setPaidMediaStates((s) => {
+      const current = s[id];
+      if (!current || current.state !== "received") return s;
+      return { ...s, [id]: { ...current, state: "accepted" } };
+    });
+
   const competitors = competitorsRanked();
   const allPrompts = allPromptsByLift();
   const weakPrompts = lowestVisibilityPrompts(3);
@@ -173,11 +183,18 @@ export default function ReportPage() {
         transition={{ duration: 0.7, ease: "easeOut" }}
         className="flex-1 max-w-6xl mx-auto w-full px-6 py-16"
       >
-        <Header />
+        <Header brand={username.toUpperCase()} />
 
         <Hero
           lift={data.total_revenue_lift_eur}
           customers={data.customer_equivalents}
+        />
+
+        <PaidMedia
+          states={paidMediaStates}
+          onSend={handleSend}
+          onReset={handleReset}
+          onAccept={handleAccept}
         />
 
         <VisibilityGap
@@ -200,12 +217,6 @@ export default function ReportPage() {
           sharePct={data.top3_lift_share_pct}
         />
 
-        <PaidMedia
-          states={paidMediaStates}
-          onSend={handleSend}
-          onReset={handleReset}
-        />
-
         <Methodology
           aiQueryShare={data.market_estimate.ai_query_share}
           realVolume={data.prompts_using_real_volume}
@@ -219,7 +230,7 @@ export default function ReportPage() {
   );
 }
 
-function Header() {
+function Header({ brand }: { brand: string }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -229,10 +240,10 @@ function Header() {
     >
       <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-line bg-white text-[13px] mb-5">
         <CheckCircle2 className="w-3.5 h-3.5 text-gain" />
-        Analysis complete · {BRAND}
+        Analysis complete · {brand}
       </div>
       <h1 className="text-[clamp(2.25rem,6vw,4rem)] font-semibold tracking-[-0.04em] leading-[1.02] max-w-3xl mx-auto">
-        <span className="text-ink">Where {BRAND} is leaving</span>
+        <span className="text-ink">Where {brand} is leaving</span>
         <br />
         <span className="text-muted">money on the table in AI search.</span>
       </h1>
@@ -265,7 +276,7 @@ function Hero({ lift, customers }: { lift: number; customers: number }) {
               minimumFractionDigits: 1,
               maximumFractionDigits: 1,
             })}{" "}
-            new customers / year
+            new customers
           </strong>
           , currently flowing to HubSpot &amp; co. via AI answers.
         </div>
@@ -722,10 +733,12 @@ function PaidMedia({
   states,
   onSend,
   onReset,
+  onAccept,
 }: {
   states: StateMap;
   onSend: (m: Media) => void;
   onReset: (id: MediaId) => void;
+  onAccept: (id: MediaId) => void;
 }) {
   return (
     <motion.div
@@ -754,6 +767,7 @@ function PaidMedia({
             card={states[m.id] ?? { state: "estimate" }}
             onSend={() => onSend(m)}
             onReset={() => onReset(m.id)}
+            onAccept={() => onAccept(m.id)}
           />
         ))}
       </div>
@@ -767,16 +781,20 @@ function MediaCard({
   card,
   onSend,
   onReset,
+  onAccept,
 }: {
   media: Media;
   index: number;
   card: CardData;
   onSend: () => void;
   onReset: () => void;
+  onAccept: () => void;
 }) {
   const Icon = media.icon;
-  const showOffer = card.state === "received" && !!card.offer;
-  const figures = showOffer && card.offer ? card.offer : media.estimate;
+  const hasOffer =
+    (card.state === "received" || card.state === "accepted") && !!card.offer;
+  const showOffer = hasOffer;
+  const figures = hasOffer && card.offer ? card.offer : media.estimate;
 
   return (
     <motion.div
@@ -866,19 +884,52 @@ function MediaCard({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.2 }}
-              className="flex items-center justify-between gap-2"
+              className="flex flex-col gap-2"
             >
-              <span className="inline-flex items-center gap-1.5 text-[13px] text-ink">
-                <MailCheck className="w-4 h-4 text-gain" />
-                Offer received
-              </span>
+              <div className="flex items-center justify-between gap-2">
+                <span className="inline-flex items-center gap-1.5 text-[13px] text-ink">
+                  <MailCheck className="w-4 h-4 text-gain" />
+                  Offer received
+                </span>
+                <button
+                  onClick={onReset}
+                  className="inline-flex items-center gap-1 text-[12px] text-muted hover:text-ink transition"
+                  title="Request again"
+                >
+                  <RotateCcw className="w-3 h-3" />
+                  request again
+                </button>
+              </div>
+              <button
+                onClick={onAccept}
+                className="w-full h-10 rounded-xl bg-gain text-white text-[13px] font-medium flex items-center justify-center gap-2 hover:bg-gain/90 transition"
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                Accept offer
+              </button>
+            </motion.div>
+          )}
+
+          {card.state === "accepted" && (
+            <motion.div
+              key="accepted"
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2 }}
+              className="flex flex-col gap-2"
+            >
+              <div className="w-full h-10 rounded-xl bg-gain/10 border border-gain/30 text-gain text-[13px] font-medium flex items-center justify-center gap-2">
+                <CheckCircle2 className="w-4 h-4" />
+                Offer accepted
+              </div>
               <button
                 onClick={onReset}
-                className="inline-flex items-center gap-1 text-[12px] text-muted hover:text-ink transition"
-                title="Request again"
+                className="inline-flex items-center justify-center gap-1 text-[12px] text-muted hover:text-ink transition"
+                title="Reset"
               >
                 <RotateCcw className="w-3 h-3" />
-                request again
+                start over
               </button>
             </motion.div>
           )}
@@ -951,7 +1002,7 @@ function CTA() {
         <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
       </Link>
       <Link
-        href="/"
+        href="/home"
         className="px-6 h-12 rounded-xl bg-ink text-white text-[15px] font-medium flex items-center justify-center gap-2 hover:bg-ink/90 transition group"
       >
         Start new analysis

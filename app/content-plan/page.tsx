@@ -264,7 +264,7 @@ export default function ContentPlanPage() {
             Back to report
           </Link>
           <Link
-            href="/"
+            href="/home"
             className="px-6 h-12 rounded-xl bg-ink text-white text-[15px] font-medium flex items-center justify-center gap-2 hover:bg-ink/90 transition group"
           >
             Start new analysis
