@@ -11,6 +11,7 @@ import {
   Loader2,
   ArrowRight,
 } from "lucide-react";
+import BrandMark from "@/components/BrandMark";
 type StepState = "pending" | "active" | "done";
 
 const NODES = [
@@ -94,6 +95,8 @@ export default function AnalysePage() {
 
   return (
     <main className="min-h-screen flex flex-col">
+      <BrandMark className="fixed top-5 right-6 z-50" />
+
       <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

@@ -14,6 +14,8 @@ import {
   Download,
   CalendarRange,
 } from "lucide-react";
+import BrandMark from "@/components/BrandMark";
+
 const HEBEL = [
   {
     title: "Pricing-Optimierung",
@@ -50,6 +52,8 @@ const RISKS = [
 export default function AuswertungPage() {
   return (
     <main className="min-h-screen flex flex-col">
+      <BrandMark className="fixed top-5 right-6 z-50 no-print" />
+
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
