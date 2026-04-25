@@ -12,6 +12,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import BrandMark from "@/components/BrandMark";
+import { STORAGE_KEY } from "@/lib/paidMedia";
 type StepState = "pending" | "active" | "done";
 
 const NODES = [
@@ -63,6 +64,14 @@ export default function AnalysePage() {
   const [activeNode, setActiveNode] = useState(0);
   const [thinkingIdx, setThinkingIdx] = useState(0);
   const [doneNodes, setDoneNodes] = useState<number[]>([]);
+
+  useEffect(() => {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* noop */
+    }
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
