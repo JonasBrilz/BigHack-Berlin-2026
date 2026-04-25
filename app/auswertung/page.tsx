@@ -26,12 +26,9 @@ import {
   NOTIFY_EMAIL,
   OFFER_FIGURES,
   STORAGE_KEY,
-  loadContext,
-  requestOffer,
   type CardState,
   type Figures,
   type MediaId,
-  type OfferContext,
 } from "@/lib/paidMedia";
 
 type Media = {
@@ -95,7 +92,6 @@ const initialStateMap = (): StateMap =>
 
 export default function AuswertungPage() {
   const [states, setStates] = useState<StateMap>(initialStateMap);
-  const [context, setContext] = useState<OfferContext | undefined>(undefined);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
@@ -104,22 +100,24 @@ export default function AuswertungPage() {
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<StateMap>;
         const merged = { ...initialStateMap(), ...parsed };
-        // Demo magic: once any partner has responded, auto-fill the rest on
-        // re-entry so "Analyse fortsetzen" lands on the full offer view.
-        const hasAny = MEDIA.some((m) => merged[m.id]?.state === "received");
-        if (hasAny) {
+        // Demo flow: a sending card from a previous visit means the user
+        // already fired off a request and is now coming back via "Analyse
+        // fortsetzen" — flip it (and the rest) to received with the offer.
+        const hasPending = MEDIA.some(
+          (m) =>
+            merged[m.id]?.state === "sending" ||
+            merged[m.id]?.state === "received"
+        );
+        if (hasPending) {
           for (const m of MEDIA) {
-            if (merged[m.id]?.state !== "received") {
-              merged[m.id] = {
-                state: "received",
-                offer: OFFER_FIGURES[m.id],
-              };
-            }
+            merged[m.id] = {
+              state: "received",
+              offer: OFFER_FIGURES[m.id],
+            };
           }
         }
         setStates(merged);
       }
-      setContext(loadContext());
       localStorage.setItem(ANALYSIS_FLAG, "1");
     } catch {
       /* noop */
@@ -139,7 +137,7 @@ export default function AuswertungPage() {
   const setCard = (id: MediaId, next: CardData) =>
     setStates((s) => ({ ...s, [id]: next }));
 
-  const handleSend = async (m: Media) => {
+  const handleSend = (m: Media) => {
     const subject = `Angebotsanfrage Paid Media · ${m.title}`;
     const body =
       `Hallo ${m.title} Team,\n\n` +
@@ -159,13 +157,8 @@ export default function AuswertungPage() {
 
     window.open(mailto, "_self");
     setCard(m.id, { state: "sending" });
-
-    try {
-      const offer = await requestOffer(m.id, context);
-      setCard(m.id, { state: "received", offer: offer.figures });
-    } catch {
-      setCard(m.id, { state: "estimate" });
-    }
+    // The card stays in "Warten auf Antwort" until the user re-enters
+    // /auswertung via "Analyse fortsetzen" — the mount effect promotes it.
   };
 
   const handleReset = (id: MediaId) => setCard(id, { state: "estimate" });
@@ -363,7 +356,7 @@ function MediaCard({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.4 + index * 0.08 }}
-      className={`group rounded-2xl bg-white border p-6 flex flex-col transition-colors ${
+      className={`print-card group rounded-2xl bg-white border p-6 flex flex-col transition-colors ${
         showOffer
           ? "border-ink/40 shadow-[0_2px_24px_-12px_rgba(0,0,0,0.18)]"
           : "border-line hover:border-ink/30"
@@ -407,7 +400,7 @@ function MediaCard({
         />
       </div>
 
-      <div className="mt-6 pt-5 border-t border-line">
+      <div className="mt-6 pt-5 border-t border-line no-print">
         <AnimatePresence mode="wait" initial={false}>
           {card.state === "estimate" && (
             <motion.button
