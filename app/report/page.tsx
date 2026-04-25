@@ -15,6 +15,14 @@ import {
   ChevronDown,
   ChevronRight,
   Target,
+  Mail,
+  MailCheck,
+  Loader2,
+  Globe2,
+  Briefcase,
+  Cpu,
+  RotateCcw,
+  type LucideIcon,
 } from "lucide-react";
 import BrandMark from "@/components/BrandMark";
 import {
@@ -27,17 +35,129 @@ import {
   lowestVisibilityPrompts,
   type PromptDetail,
 } from "@/lib/peec";
+import {
+  ANALYSIS_FLAG,
+  NOTIFY_EMAIL,
+  OFFER_FIGURES,
+  STORAGE_KEY,
+  type CardState,
+  type Figures,
+  type MediaId,
+} from "@/lib/paidMedia";
 
-const ANALYSIS_FLAG = "peec.hasAnalysis";
+type Media = {
+  id: MediaId;
+  title: string;
+  domain: string;
+  audience: string;
+  icon: LucideIcon;
+  estimate: Figures;
+  partnerEmail: string;
+};
+
+const MEDIA: Media[] = [
+  {
+    id: "marketsandmarkets",
+    title: "MarketsandMarkets",
+    domain: "marketsandmarkets.com",
+    audience: "B2B tech decision-makers · 4.8M MAU",
+    icon: Globe2,
+    estimate: { cost: "from €18,000", gain: "from +€72,000", gainDelta: "+10.4%" },
+    partnerEmail: "partnerships@marketsandmarkets.com",
+  },
+  {
+    id: "business-com",
+    title: "Business.com",
+    domain: "business.com",
+    audience: "SMB buyers · 3.1M MAU",
+    icon: Briefcase,
+    estimate: { cost: "from €12,000", gain: "from +€32,000", gainDelta: "+4.6%" },
+    partnerEmail: "partners@business.com",
+  },
+  {
+    id: "technologyadvice",
+    title: "TechnologyAdvice",
+    domain: "technologyadvice.com",
+    audience: "IT & SaaS buyers · 1.9M MAU",
+    icon: Cpu,
+    estimate: { cost: "from €9,500", gain: "from +€24,000", gainDelta: "+3.5%" },
+    partnerEmail: "media@technologyadvice.com",
+  },
+];
+
+type CardData = { state: CardState; offer?: Figures };
+type StateMap = Record<MediaId, CardData>;
+
+const initialStateMap = (): StateMap =>
+  MEDIA.reduce<StateMap>((acc, m) => {
+    acc[m.id] = { state: "estimate" };
+    return acc;
+  }, {} as StateMap);
 
 export default function ReportPage() {
+  const [paidMediaStates, setPaidMediaStates] = useState<StateMap>(initialStateMap);
+  const [hydrated, setHydrated] = useState(false);
+
   useEffect(() => {
     try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as Partial<StateMap>;
+        const merged = { ...initialStateMap(), ...parsed };
+        // On re-entry: any card the user sent a request for is now treated
+        // as answered. Untouched cards keep their estimate state.
+        for (const m of MEDIA) {
+          if (merged[m.id]?.state === "sending") {
+            merged[m.id] = {
+              state: "received",
+              offer: OFFER_FIGURES[m.id],
+            };
+          }
+        }
+        setPaidMediaStates(merged);
+      }
       localStorage.setItem(ANALYSIS_FLAG, "1");
     } catch {
       /* noop */
     }
+    setHydrated(true);
   }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(paidMediaStates));
+    } catch {
+      /* noop */
+    }
+  }, [paidMediaStates, hydrated]);
+
+  const setCard = (id: MediaId, next: CardData) =>
+    setPaidMediaStates((s) => ({ ...s, [id]: next }));
+
+  const handleSend = (m: Media) => {
+    const subject = `Paid media offer request · ${m.title}`;
+    const body =
+      `Hi ${m.title} team,\n\n` +
+      `we ran our AI-search visibility analysis with Peec AI and would like to ` +
+      `evaluate a Q-placement on ${m.domain}.\n\n` +
+      `• Estimated budget: ${m.estimate.cost} / quarter\n` +
+      `• Expected revenue gain: ${m.estimate.gain} / year\n\n` +
+      `Please send your current rates and available slots to ${NOTIFY_EMAIL}.\n\n` +
+      `Best,\n` +
+      `Peec AI · Profit Analysis`;
+
+    const mailto =
+      `mailto:${m.partnerEmail}` +
+      `?cc=${encodeURIComponent(NOTIFY_EMAIL)}` +
+      `&subject=${encodeURIComponent(subject)}` +
+      `&body=${encodeURIComponent(body)}`;
+
+    window.open(mailto, "_self");
+    setCard(m.id, { state: "sending" });
+  };
+
+  const handleReset = (id: MediaId) => setCard(id, { state: "estimate" });
 
   const competitors = competitorsRanked();
   const allPrompts = allPromptsByLift();
@@ -78,6 +198,12 @@ export default function ReportPage() {
         <PromptsTable
           prompts={allPrompts}
           sharePct={data.top3_lift_share_pct}
+        />
+
+        <PaidMedia
+          states={paidMediaStates}
+          onSend={handleSend}
+          onReset={handleReset}
         />
 
         <Methodology
@@ -589,6 +715,215 @@ function Methodology({
         </span>
       </div>
     </motion.div>
+  );
+}
+
+function PaidMedia({
+  states,
+  onSend,
+  onReset,
+}: {
+  states: StateMap;
+  onSend: (m: Media) => void;
+  onReset: (id: MediaId) => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.65 }}
+      className="mb-8"
+    >
+      <div className="flex items-end justify-between flex-wrap gap-4 mb-5">
+        <div>
+          <h2 className="text-[22px] font-semibold tracking-[-0.02em]">
+            Paid media outreach
+          </h2>
+          <p className="text-muted text-[15px] mt-1">
+            Request an offer — figures get filled in once the partner responds.
+          </p>
+        </div>
+      </div>
+
+      <div className="grid md:grid-cols-3 gap-5">
+        {MEDIA.map((m, i) => (
+          <MediaCard
+            key={m.id}
+            media={m}
+            index={i}
+            card={states[m.id] ?? { state: "estimate" }}
+            onSend={() => onSend(m)}
+            onReset={() => onReset(m.id)}
+          />
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
+function MediaCard({
+  media,
+  index,
+  card,
+  onSend,
+  onReset,
+}: {
+  media: Media;
+  index: number;
+  card: CardData;
+  onSend: () => void;
+  onReset: () => void;
+}) {
+  const Icon = media.icon;
+  const showOffer = card.state === "received" && !!card.offer;
+  const figures = showOffer && card.offer ? card.offer : media.estimate;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.7 + index * 0.07 }}
+      className={`print-card group rounded-2xl bg-white border p-6 flex flex-col transition-colors ${
+        showOffer
+          ? "border-ink/40 shadow-[0_2px_24px_-12px_rgba(0,0,0,0.18)]"
+          : "border-line hover:border-ink/30"
+      }`}
+    >
+      <div className="flex items-start justify-between mb-5">
+        <div className="w-11 h-11 rounded-xl bg-canvas flex items-center justify-center">
+          <Icon className="w-5 h-5" />
+        </div>
+        <span
+          className={`text-[11px] px-2 py-0.5 rounded-full border whitespace-nowrap transition-colors ${
+            showOffer
+              ? "border-ink/20 bg-ink/5 text-ink"
+              : "border-line bg-canvas text-muted"
+          }`}
+        >
+          {showOffer ? "Offer" : "Estimate"}
+        </span>
+      </div>
+
+      <div className="text-[12px] text-muted mb-1">#{index + 1} Paid media</div>
+      <h3 className="text-[20px] font-semibold tracking-tight leading-tight">
+        {media.title}
+      </h3>
+      <div className="text-[13px] text-muted mt-0.5 truncate">{media.domain}</div>
+      <div className="text-[12px] text-muted mt-2 leading-snug">
+        {media.audience}
+      </div>
+
+      <div className="mt-5 space-y-2.5">
+        <FigureRow
+          label="Estimated cost"
+          value={figures.cost}
+          sub="/ quarter"
+        />
+        <FigureRow
+          label="Revenue gain"
+          value={figures.gain}
+          sub="/ year"
+          delta={figures.gainDelta}
+          accent="gain"
+        />
+      </div>
+
+      <div className="mt-6 pt-5 border-t border-line no-print">
+        <AnimatePresence mode="wait" initial={false}>
+          {card.state === "estimate" && (
+            <motion.button
+              key="estimate"
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2 }}
+              onClick={onSend}
+              className="w-full h-11 rounded-xl bg-ink text-white text-[14px] font-medium flex items-center justify-center gap-2 hover:bg-ink/90 transition"
+            >
+              <Mail className="w-4 h-4" />
+              Request offer
+            </motion.button>
+          )}
+
+          {card.state === "sending" && (
+            <motion.div
+              key="sending"
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2 }}
+              className="w-full h-11 rounded-xl bg-canvas border border-line text-[13px] text-muted flex items-center justify-center gap-2"
+            >
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Request sent · Waiting for response
+            </motion.div>
+          )}
+
+          {card.state === "received" && (
+            <motion.div
+              key="received"
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2 }}
+              className="flex items-center justify-between gap-2"
+            >
+              <span className="inline-flex items-center gap-1.5 text-[13px] text-ink">
+                <MailCheck className="w-4 h-4 text-gain" />
+                Offer received
+              </span>
+              <button
+                onClick={onReset}
+                className="inline-flex items-center gap-1 text-[12px] text-muted hover:text-ink transition"
+                title="Request again"
+              >
+                <RotateCcw className="w-3 h-3" />
+                request again
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </motion.div>
+  );
+}
+
+function FigureRow({
+  label,
+  value,
+  sub,
+  delta,
+  accent,
+}: {
+  label: string;
+  value: string;
+  sub: string;
+  delta?: string;
+  accent?: "gain";
+}) {
+  return (
+    <div className="rounded-xl bg-canvas border border-line px-3.5 py-3 flex items-baseline justify-between gap-3">
+      <div className="min-w-0">
+        <div className="text-[11px] uppercase tracking-wider text-muted">
+          {label}
+        </div>
+        <div
+          className={`mt-0.5 text-[18px] font-semibold tracking-tight leading-tight truncate tabular-nums ${
+            accent === "gain" ? "text-gain" : ""
+          }`}
+        >
+          {value}
+        </div>
+      </div>
+      <div className="flex items-baseline gap-1.5 text-[11px] text-muted whitespace-nowrap">
+        <span>{sub}</span>
+        {delta && (
+          <span className="inline-flex items-center text-gain font-medium">
+            {delta}
+          </span>
+        )}
+      </div>
+    </div>
   );
 }
 
