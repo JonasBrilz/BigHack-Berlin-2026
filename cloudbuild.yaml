@@ -2,6 +2,36 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 steps:
+  - name: node:22-alpine
+    entrypoint: sh
+    args:
+      - -c
+      - |
+        if [ -d /cache/node_modules ]; then
+          cp -r /cache/node_modules ./node_modules
+        fi
+        npm ci --quiet
+        cp -r ./node_modules /cache/node_modules
+    volumes:
+      - name: cache
+        path: /cache
+
+  - name: node:22-alpine
+    entrypoint: sh
+    args:
+      - -c
+      - |
+        if [ -d /cache/.next/cache ]; then
+          mkdir -p .next
+          cp -r /cache/.next/cache ./.next/cache
+        fi
+        npm run build
+        mkdir -p /cache/.next
+        cp -r ./.next/cache /cache/.next/cache
+    volumes:
+      - name: cache
+        path: /cache
+
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
     entrypoint: gcloud
     args:
@@ -12,3 +42,9 @@ steps:
       - --region=europe-west1
       - --platform=managed
       - --allow-unauthenticated
+
+cache:
+  paths:
+    - node_modules/
+    - .next/cache/
+  bucket: bighack-berlin-build-cache
