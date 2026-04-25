@@ -7,7 +7,7 @@ steps:
     args:
       - -c
       - |
-        gsutil -m cp -r gs://bighack-berlin-build-cache/node_modules . || true
+        gsutil cp gs://bighack-berlin-build-cache/node_modules.tar.gz . && tar -xzf node_modules.tar.gz || true
 
   - name: node:22-alpine
     entrypoint: sh
@@ -25,8 +25,7 @@ steps:
     entrypoint: sh
     args:
       - -c
-      - |
-        gsutil -m cp -r ./node_modules gs://bighack-berlin-build-cache/node_modules || true
+      - tar -czf node_modules.tar.gz node_modules && gsutil cp node_modules.tar.gz gs://bighack-berlin-build-cache/node_modules.tar.gz
 
   - name: gcr.io/cloud-builders/gsutil
     args:
