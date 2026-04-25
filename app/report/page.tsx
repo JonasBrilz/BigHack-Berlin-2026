@@ -28,71 +28,79 @@ import BrandMark from "@/components/BrandMark";
 import {
   BRAND,
   allPromptsByLift,
+  bracket,
   competitorsRanked,
   data,
   formatEuro,
   formatPct,
+  formatUsdRange,
   lowestVisibilityPrompts,
+  paidMediaOpportunities,
+  type PaidMediaOpportunity,
   type PromptDetail,
 } from "@/lib/peec";
 import {
   ANALYSIS_FLAG,
   NOTIFY_EMAIL,
-  OFFER_FIGURES,
   STORAGE_KEY,
   type CardState,
   type Figures,
-  type MediaId,
 } from "@/lib/paidMedia";
 
 type Media = {
-  id: MediaId;
+  id: string;
   title: string;
   domain: string;
   audience: string;
   icon: LucideIcon;
   estimate: Figures;
+  offer: Figures;
   partnerEmail: string;
 };
 
-const MEDIA: Media[] = [
-  {
-    id: "marketsandmarkets",
-    title: "MarketsandMarkets",
-    domain: "marketsandmarkets.com",
-    audience: "B2B tech decision-makers · 4.8M MAU",
-    icon: Globe2,
-    estimate: { cost: "from €18,000", gain: "from +€72,000", gainDelta: "+10.4%" },
-    partnerEmail: "partnerships@marketsandmarkets.com",
-  },
-  {
-    id: "business-com",
-    title: "Business.com",
-    domain: "business.com",
-    audience: "SMB buyers · 3.1M MAU",
-    icon: Briefcase,
-    estimate: { cost: "from €12,000", gain: "from +€32,000", gainDelta: "+4.6%" },
-    partnerEmail: "partners@business.com",
-  },
-  {
-    id: "technologyadvice",
-    title: "TechnologyAdvice",
-    domain: "technologyadvice.com",
-    audience: "IT & SaaS buyers · 1.9M MAU",
-    icon: Cpu,
-    estimate: { cost: "from €9,500", gain: "from +€24,000", gainDelta: "+3.5%" },
-    partnerEmail: "media@technologyadvice.com",
-  },
-];
+const CARD_ICONS: LucideIcon[] = [Globe2, Briefcase, Cpu];
 
-type CardData = { state: CardState; offer?: Figures };
-type StateMap = Record<MediaId, CardData>;
+function classificationLabel(c: string): string {
+  return c
+    .replace(/_/g, " ")
+    .toLowerCase()
+    .replace(/\b\w/g, (m) => m.toUpperCase());
+}
+
+function buildMedia(o: PaidMediaOpportunity, i: number): Media {
+  const confidencePct = Math.round(o.classification_confidence * 100);
+  const audience = `${classificationLabel(o.classification)} · ${confidencePct}% confidence · ${o.contributing_chat_count} contributing chats`;
+
+  // Pessimistic = the floor we show before the partner replies.
+  // Optimistic  = the offer figures the partner comes back with.
+  const pessGain = `+${o.delta_visibility_pp_pessimistic.toFixed(2)} pp`;
+  const optGain = `+${o.delta_visibility_pp_optimistic.toFixed(2)} pp`;
+  const pessChats = `${o.delta_chats_pessimistic.toFixed(1)} chats / yr`;
+  const optChats = `${o.delta_chats_optimistic.toFixed(0)} chats / yr`;
+  const pricing = formatUsdRange(o.pricing);
+
+  return {
+    id: o.domain,
+    title: o.domain,
+    domain: o.domain,
+    audience,
+    icon: CARD_ICONS[i % CARD_ICONS.length],
+    estimate: { cost: pricing, gain: pessGain, gainDelta: pessChats },
+    offer: { cost: pricing, gain: optGain, gainDelta: optChats },
+    partnerEmail: `partnerships@${o.domain}`,
+  };
+}
+
+const MEDIA: Media[] = paidMediaOpportunities(3).map(buildMedia);
+
+type CardData = { state: CardState };
+type StateMap = Record<string, CardData>;
 
 const initialStateMap = (): StateMap =>
   MEDIA.reduce<StateMap>((acc, m) => {
     acc[m.id] = { state: "estimate" };
     return acc;
-  }, {} as StateMap);
+  }, {});
 
 export default function ReportPage() {
   const [paidMediaStates, setPaidMediaStates] = useState<StateMap>(initialStateMap);
@@ -103,16 +111,13 @@ export default function ReportPage() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        const parsed = JSON.parse(raw) as Partial<StateMap>;
-        const merged = { ...initialStateMap(), ...parsed };
+        const parsed = JSON.parse(raw) as Record<string, CardData>;
+        const merged: StateMap = { ...initialStateMap(), ...parsed };
         // On re-entry: any card the user sent a request for is now treated
         // as answered. Untouched cards keep their estimate state.
         for (const m of MEDIA) {
           if (merged[m.id]?.state === "sending") {
-            merged[m.id] = {
-              state: "received",
-              offer: OFFER_FIGURES[m.id],
-            };
+            merged[m.id] = { state: "received" };
           }
         }
         setPaidMediaStates(merged);
@@ -135,7 +140,7 @@ export default function ReportPage() {
     }
   }, [paidMediaStates, hydrated]);
 
-  const setCard = (id: MediaId, next: CardData) =>
+  const setCard = (id: string, next: CardData) =>
     setPaidMediaStates((s) => ({ ...s, [id]: next }));
 
   const handleSend = (m: Media) => {
@@ -160,13 +165,13 @@ export default function ReportPage() {
     setCard(m.id, { state: "sending" });
   };
 
-  const handleReset = (id: MediaId) => setCard(id, { state: "estimate" });
+  const handleReset = (id: string) => setCard(id, { state: "estimate" });
 
-  const handleAccept = (id: MediaId) =>
+  const handleAccept = (id: string) =>
     setPaidMediaStates((s) => {
       const current = s[id];
       if (!current || current.state !== "received") return s;
-      return { ...s, [id]: { ...current, state: "accepted" } };
+      return { ...s, [id]: { state: "accepted" } };
     });
 
   const competitors = competitorsRanked();
@@ -186,8 +191,12 @@ export default function ReportPage() {
         <Header brand={username.toUpperCase()} />
 
         <Hero
-          lift={data.total_revenue_lift_eur}
-          customers={data.customer_equivalents}
+          pessimisticLift={bracket.pessimistic_total_revenue_lift_eur}
+          optimisticLift={bracket.optimistic_total_revenue_lift_eur}
+          pessimisticCustomers={bracket.pessimistic_customer_equivalents}
+          optimisticCustomers={bracket.optimistic_customer_equivalents}
+          pessimisticPp={bracket.pessimistic_visibility_increase_pp}
+          optimisticPp={bracket.optimistic_visibility_increase_pp}
         />
 
         <PaidMedia
@@ -251,7 +260,24 @@ function Header({ brand }: { brand: string }) {
   );
 }
 
-function Hero({ lift, customers }: { lift: number; customers: number }) {
+function Hero({
+  pessimisticLift,
+  optimisticLift,
+  pessimisticCustomers,
+  optimisticCustomers,
+  pessimisticPp,
+  optimisticPp,
+}: {
+  pessimisticLift: number;
+  optimisticLift: number;
+  pessimisticCustomers: number;
+  optimisticCustomers: number;
+  pessimisticPp: number;
+  optimisticPp: number;
+}) {
+  const fmtCust = (n: number) =>
+    n.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.97 }}
@@ -266,22 +292,81 @@ function Hero({ lift, customers }: { lift: number; customers: number }) {
           Potential gain · annual
         </div>
         <div className="text-[clamp(3.25rem,11vw,7rem)] font-semibold tracking-[-0.04em] leading-none text-gain">
-          +{formatEuro(lift)}
+          +{formatEuro(optimisticLift)}
         </div>
         <div className="mt-5 text-[17px] text-white/70 leading-relaxed flex items-center gap-2">
           <Users className="w-4 h-4 text-white/60" />
           ≈{" "}
           <strong className="text-white">
-            {customers.toLocaleString("en-US", {
-              minimumFractionDigits: 1,
-              maximumFractionDigits: 1,
-            })}{" "}
-            new customers
+            {fmtCust(optimisticCustomers)} new customers
           </strong>
           , currently flowing to HubSpot &amp; co. via AI answers.
         </div>
+
+        <div className="mt-7 grid sm:grid-cols-2 gap-3 max-w-2xl">
+          <ScenarioPill
+            label="Pessimistic"
+            lift={pessimisticLift}
+            customers={fmtCust(pessimisticCustomers)}
+            pp={pessimisticPp}
+          />
+          <ScenarioPill
+            label="Optimistic"
+            lift={optimisticLift}
+            customers={fmtCust(optimisticCustomers)}
+            pp={optimisticPp}
+            highlight
+          />
+        </div>
       </div>
     </motion.div>
+  );
+}
+
+function ScenarioPill({
+  label,
+  lift,
+  customers,
+  pp,
+  highlight,
+}: {
+  label: string;
+  lift: number;
+  customers: string;
+  pp: number;
+  highlight?: boolean;
+}) {
+  return (
+    <div
+      className={`rounded-xl border px-4 py-3 ${
+        highlight
+          ? "border-gain/40 bg-gain/10"
+          : "border-white/10 bg-white/5"
+      }`}
+    >
+      <div
+        className={`text-[11px] uppercase tracking-wider ${
+          highlight ? "text-gain" : "text-white/50"
+        }`}
+      >
+        {label}
+      </div>
+      <div className="mt-1 flex items-baseline gap-2 flex-wrap">
+        <span
+          className={`text-[20px] font-semibold tracking-tight tabular-nums ${
+            highlight ? "text-gain" : "text-white"
+          }`}
+        >
+          +{formatEuro(lift)}
+        </span>
+        <span className="text-[12px] text-white/60 tabular-nums">
+          · ≈ {customers} new customers
+        </span>
+      </div>
+      <div className="text-[11px] text-white/50 tabular-nums mt-0.5">
+        +{pp.toFixed(2)} pp visibility
+      </div>
+    </div>
   );
 }
 
@@ -737,8 +822,8 @@ function PaidMedia({
 }: {
   states: StateMap;
   onSend: (m: Media) => void;
-  onReset: (id: MediaId) => void;
-  onAccept: (id: MediaId) => void;
+  onReset: (id: string) => void;
+  onAccept: (id: string) => void;
 }) {
   return (
     <motion.div
@@ -791,10 +876,9 @@ function MediaCard({
   onAccept: () => void;
 }) {
   const Icon = media.icon;
-  const hasOffer =
-    (card.state === "received" || card.state === "accepted") && !!card.offer;
-  const showOffer = hasOffer;
-  const figures = hasOffer && card.offer ? card.offer : media.estimate;
+  const showOffer =
+    card.state === "received" || card.state === "accepted";
+  const figures = showOffer ? media.offer : media.estimate;
 
   return (
     <motion.div
@@ -833,15 +917,14 @@ function MediaCard({
 
       <div className="mt-5 space-y-2.5">
         <FigureRow
-          label="Estimated cost"
+          label="Pricing"
           value={figures.cost}
-          sub="/ quarter"
+          sub="USD"
         />
         <FigureRow
-          label="Revenue gain"
+          label="Visibility lift"
           value={figures.gain}
-          sub="/ year"
-          delta={figures.gainDelta}
+          sub={figures.gainDelta}
           accent="gain"
         />
       </div>
