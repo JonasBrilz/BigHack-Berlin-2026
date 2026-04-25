@@ -24,6 +24,7 @@ import BrandMark from "@/components/BrandMark";
 import {
   ANALYSIS_FLAG,
   NOTIFY_EMAIL,
+  OFFER_FIGURES,
   STORAGE_KEY,
   loadContext,
   requestOffer,
@@ -102,7 +103,21 @@ export default function AuswertungPage() {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<StateMap>;
-        setStates({ ...initialStateMap(), ...parsed });
+        const merged = { ...initialStateMap(), ...parsed };
+        // Demo magic: once any partner has responded, auto-fill the rest on
+        // re-entry so "Analyse fortsetzen" lands on the full offer view.
+        const hasAny = MEDIA.some((m) => merged[m.id]?.state === "received");
+        if (hasAny) {
+          for (const m of MEDIA) {
+            if (merged[m.id]?.state !== "received") {
+              merged[m.id] = {
+                state: "received",
+                offer: OFFER_FIGURES[m.id],
+              };
+            }
+          }
+        }
+        setStates(merged);
       }
       setContext(loadContext());
       localStorage.setItem(ANALYSIS_FLAG, "1");
