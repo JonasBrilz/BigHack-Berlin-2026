@@ -13,14 +13,7 @@ export default function Navbar() {
           <a className="hover:text-ink" href="#">Careers</a>
         </nav>
 
-        <div className="flex items-center gap-2">
-          <button className="px-4 h-9 text-[14px] rounded-lg hover:bg-ink/5 transition">
-            Log in
-          </button>
-          <button className="px-4 h-9 text-[14px] rounded-lg bg-ink text-white hover:bg-ink/90 transition">
-            Sign up
-          </button>
-        </div>
+        <div className="w-px" />
       </div>
     </header>
   );
