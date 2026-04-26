@@ -19,7 +19,7 @@ const NODES = [
   {
     id: "data",
     title: "Data capture",
-    desc: "We pull together all relevant business data — revenue, costs, market position.",
+    desc: "We aggregate the business data that matters — revenue, costs, market position.",
     icon: Database,
   },
   {
@@ -126,7 +126,7 @@ export default function AnalysePage() {
             Mapping your <span className="text-muted">AI-search footprint</span>
           </h1>
           <p className="mt-4 text-[16px] text-muted max-w-xl mx-auto">
-            Three passes. One outcome: locate the pipeline AI search isn&apos;t sending you.
+            Three passes. One outcome: surface the pipeline you're missing in AI search.
           </p>
         </motion.div>
 

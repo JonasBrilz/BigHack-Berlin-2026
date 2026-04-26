@@ -17,11 +17,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
-import {
-  ANALYSIS_FLAG,
-  VORJAHRES_ARPU,
-  saveContext,
-} from "@/lib/paidMedia";
+import { ANALYSIS_FLAG, saveContext } from "@/lib/paidMedia";
 
 type RateMode = "standard" | "manual" | "crm";
 
@@ -51,9 +47,8 @@ export default function HomePage() {
     saveContext({
       visitToLead: Number.isFinite(v2l) ? v2l : STANDARD_VISIT_TO_LEAD,
       leadToCustomer: Number.isFinite(l2c) ? l2c : STANDARD_LEAD_TO_CUSTOMER,
-      avgRevenuePerCustomer: Number.isFinite(arpuNum) && arpuNum > 0
-        ? arpuNum
-        : VORJAHRES_ARPU,
+      avgRevenuePerCustomer:
+        Number.isFinite(arpuNum) && arpuNum > 0 ? arpuNum : undefined,
     });
   }, [mode, visitToLead, leadToCustomer, arpu]);
 
@@ -341,7 +336,7 @@ export default function HomePage() {
           <StepCard
             n="03"
             title="Pipeline at stake"
-            desc="We quantify the revenue AI-driven discovery isn’t sending your way."
+            desc="We quantify the revenue you're missing from AI-driven discovery."
           />
         </motion.div>
       </section>

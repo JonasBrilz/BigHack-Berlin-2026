@@ -45,7 +45,6 @@ import {
   NOTIFY_EMAIL,
   STORAGE_KEY,
   type CardState,
-  type Figures,
 } from "@/lib/paidMedia";
 
 type Media = {
@@ -54,8 +53,10 @@ type Media = {
   domain: string;
   audience: string;
   icon: LucideIcon;
-  estimate: Figures;
-  offer: Figures;
+  cost: string;
+  gainRange: string;
+  gainDeltaRange: string;
+  gainLow: string;
   partnerEmail: string;
 };
 
@@ -87,26 +88,16 @@ function buildMedia(o: PaidMediaOpportunity, i: number): Media {
   const pessLiftEur = pessShare * bracket.pessimistic_total_revenue_lift_eur;
   const optLiftEur = optShare * bracket.optimistic_total_revenue_lift_eur;
 
-  // Pessimistic = the floor we show before the partner replies.
-  // Optimistic  = the offer figures the partner comes back with.
-  const pricing = formatUsdRange(o.pricing);
-
   return {
     id: o.domain,
     title: o.domain,
     domain: o.domain,
     audience,
     icon: CARD_ICONS[i % CARD_ICONS.length],
-    estimate: {
-      cost: pricing,
-      gain: `+${formatEuro(pessLiftEur)}`,
-      gainDelta: `+${o.delta_visibility_pp_pessimistic.toFixed(2)} pp`,
-    },
-    offer: {
-      cost: pricing,
-      gain: `+${formatEuro(optLiftEur)}`,
-      gainDelta: `+${o.delta_visibility_pp_optimistic.toFixed(2)} pp`,
-    },
+    cost: formatUsdRange(o.pricing),
+    gainRange: `+${formatEuro(pessLiftEur)} – +${formatEuro(optLiftEur)}`,
+    gainDeltaRange: `+${o.delta_visibility_pp_pessimistic.toFixed(2)}–${o.delta_visibility_pp_optimistic.toFixed(2)} pp`,
+    gainLow: `+${formatEuro(pessLiftEur)}`,
     partnerEmail: `partnerships@${o.domain}`,
   };
 }
@@ -169,8 +160,8 @@ export default function ReportPage() {
       `Hi ${m.title} team,\n\n` +
       `we ran our AI-search visibility analysis with Peec AI and would like to ` +
       `evaluate a Q-placement on ${m.domain}.\n\n` +
-      `• Estimated budget: ${m.estimate.cost} / quarter\n` +
-      `• Expected revenue gain: ${m.estimate.gain} / year\n\n` +
+      `• Estimated budget: ${m.cost} / quarter\n` +
+      `• Expected revenue gain: ${m.gainRange} / year\n\n` +
       `Please send your current rates and available slots to ${NOTIFY_EMAIL}.\n\n` +
       `Best,\n` +
       `Peec AI · Profit Analysis`;
@@ -325,18 +316,20 @@ function Hero({
           <strong className="text-white tabular-nums">
             {fmtCust(pessimisticCustomers)}–{fmtCust(optimisticCustomers)} new customers
           </strong>
-          , captured by HubSpot &amp; co. across the AI answers your buyers see.
+          , currently won by competitors across the AI answers your buyers see.
         </div>
         <div className="mt-2 text-[13px] text-white/50 tabular-nums">
           +{pessimisticPp.toFixed(2)}–{optimisticPp.toFixed(2)} pp visibility upside
         </div>
 
         {summary && (
-          <div className="mt-8 pt-6 border-t border-white/10 text-[14px] text-white/65 leading-relaxed max-w-3xl">
-            <span className="text-[11px] uppercase tracking-wider text-white/40 mr-2">
-              Summary
-            </span>
-            {summary}
+          <div className="mt-10 pt-7 border-t border-white/15 max-w-3xl">
+            <div className="text-[11px] uppercase tracking-wider text-white/50 mb-2.5">
+              Executive summary
+            </div>
+            <p className="text-[15px] text-white/80 leading-relaxed">
+              {summary}
+            </p>
           </div>
         )}
       </div>
@@ -826,7 +819,8 @@ function PaidMedia({
             Paid media outreach
           </h2>
           <p className="text-muted text-[15px] mt-1">
-            Reach out for placement quotes — figures update once the partner replies.
+            Each card shows the projected revenue range for placement on that
+            partner — request a quote to confirm the spend.
           </p>
         </div>
       </div>
@@ -864,9 +858,17 @@ function MediaCard({
   onAccept: () => void;
 }) {
   const Icon = media.icon;
-  const showOffer =
-    card.state === "received" || card.state === "accepted";
-  const figures = showOffer ? media.offer : media.estimate;
+  const accepted = card.state === "accepted";
+  const received = card.state === "received";
+  const highlight = accepted || received;
+
+  const statusLabel = accepted
+    ? "Accepted"
+    : received
+      ? "Offer in"
+      : card.state === "sending"
+        ? "Awaiting reply"
+        : "Forecast";
 
   return (
     <motion.div
@@ -874,7 +876,7 @@ function MediaCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.7 + index * 0.07 }}
       className={`print-card group rounded-2xl bg-white border p-6 flex flex-col transition-colors ${
-        showOffer
+        highlight
           ? "border-ink/40 shadow-[0_2px_24px_-12px_rgba(0,0,0,0.18)]"
           : "border-line hover:border-ink/30"
       }`}
@@ -885,12 +887,12 @@ function MediaCard({
         </div>
         <span
           className={`text-[11px] px-2 py-0.5 rounded-full border whitespace-nowrap transition-colors ${
-            showOffer
+            highlight
               ? "border-ink/20 bg-ink/5 text-ink"
               : "border-line bg-canvas text-muted"
           }`}
         >
-          {showOffer ? "Offer" : "Estimate"}
+          {statusLabel}
         </span>
       </div>
 
@@ -906,14 +908,14 @@ function MediaCard({
       <div className="mt-5 space-y-2.5">
         <FigureRow
           label="Estimated cost"
-          value={figures.cost}
+          value={media.cost}
           sub="/ quarter"
         />
         <FigureRow
-          label="Revenue gain"
-          value={figures.gain}
+          label="Projected revenue gain"
+          value={media.gainRange}
           sub="/ year"
-          delta={figures.gainDelta}
+          delta={media.gainDeltaRange}
           accent="gain"
         />
       </div>
@@ -1025,27 +1027,25 @@ function FigureRow({
   accent?: "gain";
 }) {
   return (
-    <div className="rounded-xl bg-canvas border border-line px-3.5 py-3 flex items-baseline justify-between gap-3">
-      <div className="min-w-0">
+    <div className="rounded-xl bg-canvas border border-line px-3.5 py-3">
+      <div className="flex items-baseline justify-between gap-2">
         <div className="text-[11px] uppercase tracking-wider text-muted">
           {label}
         </div>
-        <div
-          className={`mt-0.5 text-[18px] font-semibold tracking-tight leading-tight truncate tabular-nums ${
-            accent === "gain" ? "text-gain" : ""
-          }`}
-        >
-          {value}
+        <span className="text-[11px] text-muted whitespace-nowrap">{sub}</span>
+      </div>
+      <div
+        className={`mt-1 text-[16px] font-semibold tracking-tight leading-tight tabular-nums ${
+          accent === "gain" ? "text-gain" : ""
+        }`}
+      >
+        {value}
+      </div>
+      {delta && (
+        <div className="mt-0.5 text-[11px] text-gain font-medium tabular-nums">
+          {delta}
         </div>
-      </div>
-      <div className="flex items-baseline gap-1.5 text-[11px] text-muted whitespace-nowrap">
-        <span>{sub}</span>
-        {delta && (
-          <span className="inline-flex items-center text-gain font-medium">
-            {delta}
-          </span>
-        )}
-      </div>
+      )}
     </div>
   );
 }
