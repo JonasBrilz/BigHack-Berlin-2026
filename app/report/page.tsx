@@ -31,6 +31,7 @@ import {
   bracket,
   competitorsRanked,
   data,
+  executiveSummary,
   formatEuro,
   formatPct,
   formatUsdRange,
@@ -216,6 +217,7 @@ export default function ReportPage() {
           optimisticCustomers={bracket.optimistic_customer_equivalents}
           pessimisticPp={bracket.pessimistic_visibility_increase_pp}
           optimisticPp={bracket.optimistic_visibility_increase_pp}
+          summary={executiveSummary}
         />
 
         <PaidMedia
@@ -271,9 +273,9 @@ function Header({ brand }: { brand: string }) {
         Analysis complete · {brand}
       </div>
       <h1 className="text-[clamp(2.25rem,6vw,4rem)] font-semibold tracking-[-0.04em] leading-[1.02] max-w-3xl mx-auto">
-        <span className="text-ink">Where {brand} is leaving</span>
+        <span className="text-ink">Where {brand} loses pipeline</span>
         <br />
-        <span className="text-muted">money on the table in AI search.</span>
+        <span className="text-muted">in AI-driven discovery.</span>
       </h1>
     </motion.div>
   );
@@ -286,6 +288,7 @@ function Hero({
   optimisticCustomers,
   pessimisticPp,
   optimisticPp,
+  summary,
 }: {
   pessimisticLift: number;
   optimisticLift: number;
@@ -293,6 +296,7 @@ function Hero({
   optimisticCustomers: number;
   pessimisticPp: number;
   optimisticPp: number;
+  summary: string;
 }) {
   const fmtCust = (n: number) =>
     n.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
@@ -310,82 +314,33 @@ function Hero({
           <Sparkles className="w-3.5 h-3.5" />
           Potential gain · annual
         </div>
-        <div className="text-[clamp(3.25rem,11vw,7rem)] font-semibold tracking-[-0.04em] leading-none text-gain">
+        <div className="text-[clamp(2.5rem,8.5vw,5.5rem)] font-semibold tracking-[-0.04em] leading-[1.02] text-gain tabular-nums">
+          +{formatEuro(pessimisticLift)}
+          <span className="text-white/30 font-normal mx-2">—</span>
           +{formatEuro(optimisticLift)}
         </div>
-        <div className="mt-5 text-[17px] text-white/70 leading-relaxed flex items-center gap-2">
+        <div className="mt-5 text-[17px] text-white/70 leading-relaxed flex items-center gap-2 flex-wrap">
           <Users className="w-4 h-4 text-white/60" />
           ≈{" "}
-          <strong className="text-white">
-            {fmtCust(optimisticCustomers)} new customers
+          <strong className="text-white tabular-nums">
+            {fmtCust(pessimisticCustomers)}–{fmtCust(optimisticCustomers)} new customers
           </strong>
-          , currently flowing to HubSpot &amp; co. via AI answers.
+          , captured by HubSpot &amp; co. across the AI answers your buyers see.
+        </div>
+        <div className="mt-2 text-[13px] text-white/50 tabular-nums">
+          +{pessimisticPp.toFixed(2)}–{optimisticPp.toFixed(2)} pp visibility upside
         </div>
 
-        <div className="mt-7 grid sm:grid-cols-2 gap-3 max-w-2xl">
-          <ScenarioPill
-            label="Pessimistic"
-            lift={pessimisticLift}
-            customers={fmtCust(pessimisticCustomers)}
-            pp={pessimisticPp}
-          />
-          <ScenarioPill
-            label="Optimistic"
-            lift={optimisticLift}
-            customers={fmtCust(optimisticCustomers)}
-            pp={optimisticPp}
-            highlight
-          />
-        </div>
+        {summary && (
+          <div className="mt-8 pt-6 border-t border-white/10 text-[14px] text-white/65 leading-relaxed max-w-3xl">
+            <span className="text-[11px] uppercase tracking-wider text-white/40 mr-2">
+              Summary
+            </span>
+            {summary}
+          </div>
+        )}
       </div>
     </motion.div>
-  );
-}
-
-function ScenarioPill({
-  label,
-  lift,
-  customers,
-  pp,
-  highlight,
-}: {
-  label: string;
-  lift: number;
-  customers: string;
-  pp: number;
-  highlight?: boolean;
-}) {
-  return (
-    <div
-      className={`rounded-xl border px-4 py-3 ${
-        highlight
-          ? "border-gain/40 bg-gain/10"
-          : "border-white/10 bg-white/5"
-      }`}
-    >
-      <div
-        className={`text-[11px] uppercase tracking-wider ${
-          highlight ? "text-gain" : "text-white/50"
-        }`}
-      >
-        {label}
-      </div>
-      <div className="mt-1 flex items-baseline gap-2 flex-wrap">
-        <span
-          className={`text-[20px] font-semibold tracking-tight tabular-nums ${
-            highlight ? "text-gain" : "text-white"
-          }`}
-        >
-          +{formatEuro(lift)}
-        </span>
-        <span className="text-[12px] text-white/60 tabular-nums">
-          · ≈ {customers} new customers
-        </span>
-      </div>
-      <div className="text-[11px] text-white/50 tabular-nums mt-0.5">
-        +{pp.toFixed(2)} pp visibility
-      </div>
-    </div>
   );
 }
 
@@ -413,7 +368,7 @@ function VisibilityGap({
             {Math.round(gapPp)} pp visibility gap
           </h2>
           <p className="text-muted text-[14px] mt-1">
-            How often AI mentions {leaderName} compared to {BRAND}.
+            Share of voice across AI answers — {BRAND} vs. {leaderName}.
           </p>
         </div>
       </div>
@@ -503,7 +458,7 @@ function InvisibleCallout({
               / {total}
             </span>
             <span className="text-[14px] text-muted ml-2">
-              prompts where {BRAND} doesn&apos;t show up at all.
+              prompts where {BRAND} never surfaces in AI answers.
             </span>
           </div>
           <div className="mt-5 grid sm:grid-cols-3 gap-2">
@@ -546,7 +501,7 @@ function Competitive({
         Competitive landscape
       </h2>
       <p className="text-muted text-[14px] mb-6">
-        Who beats {BRAND} across the {totalPrompts} relevant prompts.
+        Who outranks {BRAND} across the {totalPrompts} prompts in scope.
       </p>
       <div className="space-y-4">
         {competitors.map((c, i) => {
@@ -602,9 +557,9 @@ function PromptsTable({
             All {total} prompts
           </h2>
           <p className="text-muted text-[14px] mt-1">
-            Top 3 capture{" "}
-            <span className="text-ink font-medium">{sharePct}%</span> of total
-            lift. Click any row for full stats and the recommended action.
+            The top 3 hold{" "}
+            <span className="text-ink font-medium">{sharePct}%</span> of the
+            lift. Open any row for the full read.
           </p>
         </div>
         <div className="inline-flex items-center gap-2 text-[12px] text-muted">
@@ -676,8 +631,21 @@ function PromptsTable({
 }
 
 function PromptDetailView({ prompt }: { prompt: PromptDetail }) {
+  const summary =
+    prompt.ai_summary && prompt.ai_summary !== "this will be the ai summary"
+      ? prompt.ai_summary
+      : null;
   return (
-    <div className="px-4 pb-5 pt-1 grid md:grid-cols-3 gap-3">
+    <div className="px-4 pb-5 pt-1">
+      {summary && (
+        <div className="mb-3 rounded-lg bg-ink/5 border border-line p-4 text-[13px] leading-relaxed text-ink/80">
+          <span className="text-[11px] uppercase tracking-wider text-muted mr-2">
+            AI summary
+          </span>
+          {summary}
+        </div>
+      )}
+      <div className="grid md:grid-cols-3 gap-3">
       <Stat
         label="Your visibility"
         value={`${Math.round(prompt.your_visibility * 100)}%`}
@@ -752,6 +720,7 @@ function PromptDetailView({ prompt }: { prompt: PromptDetail }) {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
@@ -857,7 +826,7 @@ function PaidMedia({
             Paid media outreach
           </h2>
           <p className="text-muted text-[15px] mt-1">
-            Request an offer — figures get filled in once the partner responds.
+            Reach out for placement quotes — figures update once the partner replies.
           </p>
         </div>
       </div>

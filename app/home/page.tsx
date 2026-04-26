@@ -82,10 +82,10 @@ export default function HomePage() {
             className="lg:col-span-7"
           >
             <h1 className="text-[clamp(2.75rem,7.5vw,5.75rem)] font-semibold tracking-[-0.045em] leading-[1.0]">
-              Find out
+              See where
               <br />
-              where you&apos;re leaving<br />
-              <span className="text-muted">money on the table.</span>
+              AI search costs<br />
+              <span className="text-muted">you pipeline.</span>
             </h1>
           </motion.div>
 
@@ -96,9 +96,9 @@ export default function HomePage() {
             className="lg:col-span-5 flex flex-col justify-end"
           >
             <p className="text-[18px] text-muted leading-relaxed">
-              Peec AI scans your business data, surfaces untapped revenue
-              levers, and shows you in three steps how much revenue you&apos;re
-              leaving on the table — before your competitors get there first.
+              Peec AI benchmarks your share of voice in AI answers against the
+              leaders, isolates the prompts moving the most pipeline, and
+              quantifies the revenue at stake — in three steps.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-2">
@@ -264,7 +264,7 @@ export default function HomePage() {
                   inputMode="decimal"
                   min="0"
                   step="1"
-                  placeholder={`${VORJAHRES_ARPU} (last year)`}
+                  placeholder="value in EUR"
                   value={arpu}
                   onChange={(e) => setArpu(e.target.value)}
                   className="w-full h-11 pl-7 pr-12 rounded-xl bg-white border border-line text-[15px] focus:outline-none focus:border-ink/40 transition"
@@ -331,17 +331,17 @@ export default function HomePage() {
           <StepCard
             n="01"
             title="Data capture"
-            desc="Business data, revenue, and market position are ingested."
+            desc="We ingest your revenue baseline, positioning, and AI-search footprint."
           />
           <StepCard
             n="02"
             title="Market analysis"
-            desc="Benchmarked against competitors; revenue levers identified."
+            desc="We benchmark your share of voice in AI answers against the leaders."
           />
           <StepCard
             n="03"
-            title="Untapped potential"
-            desc="We compute the revenue you’re leaving on the table."
+            title="Pipeline at stake"
+            desc="We quantify the revenue AI-driven discovery isn’t sending your way."
           />
         </motion.div>
       </section>

@@ -27,6 +27,7 @@ export type PromptRevenue = {
   target_position: number;
   target_annual_revenue_eur: number;
   revenue_lift_eur: number;
+  ai_summary?: string;
 };
 
 export type TopAction = {
@@ -120,8 +121,16 @@ export type PrepData = {
   warnings: string[];
 };
 
+export type Acv = {
+  value_eur: number;
+  source?: string;
+  notes?: string;
+};
+
 export type PeecRoot = {
   company_name: string;
+  executive_summary?: string;
+  acv?: Acv;
   bracket: Bracket;
   pessimistic: ReportSlice;
   optimistic: ReportSlice;
@@ -131,6 +140,8 @@ export type PeecRoot = {
 const root = raw as unknown as PeecRoot;
 
 export const BRAND = root.company_name;
+export const executiveSummary = root.executive_summary ?? "";
+export const acv = root.acv;
 export const bracket = root.bracket;
 export const prep = root.prep;
 export const pessimistic = root.pessimistic;
