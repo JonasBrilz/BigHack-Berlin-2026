@@ -71,12 +71,23 @@ function buildMedia(o: PaidMediaOpportunity, i: number): Media {
   const confidencePct = Math.round(o.classification_confidence * 100);
   const audience = `${classificationLabel(o.classification)} · ${confidencePct}% confidence · ${o.contributing_chat_count} contributing chats`;
 
+  // Per-partner euro lift = partner share of total visibility lift × total
+  // revenue lift, computed for both ends of the bracket.
+  const pessShare =
+    bracket.pessimistic_visibility_increase_pp > 0
+      ? o.delta_visibility_pp_pessimistic /
+        bracket.pessimistic_visibility_increase_pp
+      : 0;
+  const optShare =
+    bracket.optimistic_visibility_increase_pp > 0
+      ? o.delta_visibility_pp_optimistic /
+        bracket.optimistic_visibility_increase_pp
+      : 0;
+  const pessLiftEur = pessShare * bracket.pessimistic_total_revenue_lift_eur;
+  const optLiftEur = optShare * bracket.optimistic_total_revenue_lift_eur;
+
   // Pessimistic = the floor we show before the partner replies.
   // Optimistic  = the offer figures the partner comes back with.
-  const pessGain = `+${o.delta_visibility_pp_pessimistic.toFixed(2)} pp`;
-  const optGain = `+${o.delta_visibility_pp_optimistic.toFixed(2)} pp`;
-  const pessChats = `${o.delta_chats_pessimistic.toFixed(1)} chats / yr`;
-  const optChats = `${o.delta_chats_optimistic.toFixed(0)} chats / yr`;
   const pricing = formatUsdRange(o.pricing);
 
   return {
@@ -85,8 +96,16 @@ function buildMedia(o: PaidMediaOpportunity, i: number): Media {
     domain: o.domain,
     audience,
     icon: CARD_ICONS[i % CARD_ICONS.length],
-    estimate: { cost: pricing, gain: pessGain, gainDelta: pessChats },
-    offer: { cost: pricing, gain: optGain, gainDelta: optChats },
+    estimate: {
+      cost: pricing,
+      gain: `+${formatEuro(pessLiftEur)}`,
+      gainDelta: `+${o.delta_visibility_pp_pessimistic.toFixed(2)} pp`,
+    },
+    offer: {
+      cost: pricing,
+      gain: `+${formatEuro(optLiftEur)}`,
+      gainDelta: `+${o.delta_visibility_pp_optimistic.toFixed(2)} pp`,
+    },
     partnerEmail: `partnerships@${o.domain}`,
   };
 }
@@ -917,14 +936,15 @@ function MediaCard({
 
       <div className="mt-5 space-y-2.5">
         <FigureRow
-          label="Pricing"
+          label="Estimated cost"
           value={figures.cost}
-          sub="USD"
+          sub="/ quarter"
         />
         <FigureRow
-          label="Visibility lift"
+          label="Revenue gain"
           value={figures.gain}
-          sub={figures.gainDelta}
+          sub="/ year"
+          delta={figures.gainDelta}
           accent="gain"
         />
       </div>
