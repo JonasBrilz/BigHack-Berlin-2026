@@ -22,6 +22,7 @@ import {
   Briefcase,
   Cpu,
   RotateCcw,
+  Plus,
   type LucideIcon,
 } from "lucide-react";
 import BrandMark from "@/components/BrandMark";
@@ -95,9 +96,9 @@ function buildMedia(o: PaidMediaOpportunity, i: number): Media {
     audience,
     icon: CARD_ICONS[i % CARD_ICONS.length],
     cost: formatUsdRange(o.pricing),
-    gainRange: `+${formatEuro(pessLiftEur)} – +${formatEuro(optLiftEur)}`,
-    gainDeltaRange: `+${o.delta_visibility_pp_pessimistic.toFixed(2)}–${o.delta_visibility_pp_optimistic.toFixed(2)} pp`,
-    gainLow: `+${formatEuro(pessLiftEur)}`,
+    gainRange: `${formatEuro(pessLiftEur)} – ${formatEuro(optLiftEur)}`,
+    gainDeltaRange: `${o.delta_visibility_pp_pessimistic.toFixed(2)}–${o.delta_visibility_pp_optimistic.toFixed(2)} pp visibility`,
+    gainLow: formatEuro(pessLiftEur),
     partnerEmail: `partnerships@${o.domain}`,
   };
 }
@@ -155,16 +156,24 @@ export default function ReportPage() {
     setPaidMediaStates((s) => ({ ...s, [id]: next }));
 
   const handleSend = (m: Media) => {
-    const subject = `Paid media offer request · ${m.title}`;
+    const subject = `Sponsorship inquiry — paid placement on ${m.domain}`;
     const body =
-      `Hi ${m.title} team,\n\n` +
-      `we ran our AI-search visibility analysis with Peec AI and would like to ` +
-      `evaluate a Q-placement on ${m.domain}.\n\n` +
-      `• Estimated budget: ${m.cost} / quarter\n` +
-      `• Expected revenue gain: ${m.gainRange} / year\n\n` +
-      `Please send your current rates and available slots to ${NOTIFY_EMAIL}.\n\n` +
-      `Best,\n` +
-      `Peec AI · Profit Analysis`;
+      `Dear ${m.title} team,\n\n` +
+      `My name is ${username} and I am reaching out regarding a potential paid ` +
+      `placement on ${m.domain}. As part of our AI-search visibility analysis ` +
+      `(conducted with Peec AI), ${m.domain} was identified as a high-impact ` +
+      `channel for our brand.\n\n` +
+      `For planning purposes, our internal model projects the following for a ` +
+      `quarterly placement:\n\n` +
+      `  • Indicative budget: ${m.cost} per quarter\n` +
+      `  • Projected annual revenue contribution: ${m.gainRange}\n\n` +
+      `Could you please share your current rate card, available slot windows ` +
+      `for the upcoming quarter, and any audience or traffic data we can ` +
+      `incorporate into our planning?\n\n` +
+      `Replies can be directed to ${NOTIFY_EMAIL}.\n\n` +
+      `Kind regards,\n` +
+      `${username}\n` +
+      `(analysis powered by Peec AI)`;
 
     const mailto =
       `mailto:${m.partnerEmail}` +
@@ -306,9 +315,11 @@ function Hero({
           Potential gain · annual
         </div>
         <div className="text-[clamp(2.5rem,8.5vw,5.5rem)] font-semibold tracking-[-0.04em] leading-[1.02] text-gain tabular-nums">
-          +{formatEuro(pessimisticLift)}
-          <span className="text-white/30 font-normal mx-2">—</span>
-          +{formatEuro(optimisticLift)}
+          {formatEuro(pessimisticLift)}
+          <span className="text-white/40 font-normal text-[0.55em] mx-4 align-middle">
+            –
+          </span>
+          {formatEuro(optimisticLift)}
         </div>
         <div className="mt-5 text-[17px] text-white/70 leading-relaxed flex items-center gap-2 flex-wrap">
           <Users className="w-4 h-4 text-white/60" />
@@ -319,7 +330,7 @@ function Hero({
           , currently won by competitors across the AI answers your buyers see.
         </div>
         <div className="mt-2 text-[13px] text-white/50 tabular-nums">
-          +{pessimisticPp.toFixed(2)}–{optimisticPp.toFixed(2)} pp visibility upside
+          {pessimisticPp.toFixed(2)}–{optimisticPp.toFixed(2)} pp visibility upside
         </div>
 
         {summary && (
@@ -592,7 +603,7 @@ function PromptsTable({
                   vis {Math.round(p.your_visibility * 100)}%
                 </span>
                 <span className="text-[15px] font-semibold tabular-nums whitespace-nowrap text-gain">
-                  +{formatEuro(p.revenue_lift_eur)}
+                  {formatEuro(p.revenue_lift_eur)}
                 </span>
                 <span className="text-muted">
                   {isOpen ? (
@@ -633,7 +644,7 @@ function PromptDetailView({ prompt }: { prompt: PromptDetail }) {
       {summary && (
         <div className="mb-3 rounded-lg bg-ink/5 border border-line p-4 text-[13px] leading-relaxed text-ink/80">
           <span className="text-[11px] uppercase tracking-wider text-muted mr-2">
-            AI summary
+            TLDR
           </span>
           {summary}
         </div>
@@ -669,7 +680,7 @@ function PromptDetailView({ prompt }: { prompt: PromptDetail }) {
       />
       <Stat
         label="Revenue lift"
-        value={`+${formatEuro(prompt.revenue_lift_eur)}`}
+        value={`${formatEuro(prompt.pessimistic_revenue_lift_eur)} – ${formatEuro(prompt.optimistic_revenue_lift_eur)}`}
         accent="gain"
       />
 
@@ -825,7 +836,7 @@ function PaidMedia({
         </div>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-5">
+      <div className="grid md:grid-cols-4 gap-5">
         {MEDIA.map((m, i) => (
           <MediaCard
             key={m.id}
@@ -837,8 +848,33 @@ function PaidMedia({
             onAccept={() => onAccept(m.id)}
           />
         ))}
+        <SeeMoreCard index={MEDIA.length} />
       </div>
     </motion.div>
+  );
+}
+
+function SeeMoreCard({ index }: { index: number }) {
+  return (
+    <motion.button
+      type="button"
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.7 + index * 0.07 }}
+      className="print-card group rounded-2xl bg-white/40 border border-dashed border-line p-6 flex flex-col items-center justify-center text-center min-h-[360px] hover:bg-white hover:border-ink/30 transition-colors no-print"
+    >
+      <div className="w-11 h-11 rounded-xl bg-canvas border border-line flex items-center justify-center mb-4 group-hover:border-ink/30 transition-colors">
+        <Plus className="w-5 h-5 text-muted group-hover:text-ink transition-colors" />
+      </div>
+      <div className="text-[15px] font-semibold tracking-tight">See more</div>
+      <p className="text-[12px] text-muted mt-1.5 max-w-[16ch] leading-snug">
+        More partner placements available in your full plan
+      </p>
+      <span className="mt-4 inline-flex items-center gap-1 text-[12px] text-ink/70 group-hover:text-ink transition-colors">
+        Browse all
+        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+      </span>
+    </motion.button>
   );
 }
 

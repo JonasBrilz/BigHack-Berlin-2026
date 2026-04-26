@@ -77,10 +77,11 @@ export default function HomePage() {
             className="lg:col-span-7"
           >
             <h1 className="text-[clamp(2.75rem,7.5vw,5.75rem)] font-semibold tracking-[-0.045em] leading-[1.0]">
-              See where
+              Your untapped
               <br />
-              AI search costs<br />
-              <span className="text-muted">you pipeline.</span>
+              revenue
+              <br />
+              <span className="text-muted">potential.</span>
             </h1>
           </motion.div>
 
@@ -91,9 +92,10 @@ export default function HomePage() {
             className="lg:col-span-5 flex flex-col justify-end"
           >
             <p className="text-[18px] text-muted leading-relaxed">
-              Peec AI benchmarks your share of voice in AI answers against the
-              leaders, isolates the prompts moving the most pipeline, and
-              quantifies the revenue at stake — in three steps.
+              ChatGPT, Perplexity, Claude, and Gemini already shape a third of
+              every B2B shortlist. Peec AI surfaces the prompts your buyers
+              actually ask, the competitors winning those answers, and the
+              pipeline you unlock by showing up first.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-2">
@@ -325,18 +327,18 @@ export default function HomePage() {
         >
           <StepCard
             n="01"
-            title="Data capture"
-            desc="We ingest your revenue baseline, positioning, and AI-search footprint."
+            title="Plug in"
+            desc="Drop in your revenue model and the prompts your buyers ask. No integration, no setup call — minutes to first signal."
           />
           <StepCard
             n="02"
-            title="Market analysis"
-            desc="We benchmark your share of voice in AI answers against the leaders."
+            title="Benchmark"
+            desc="We score your visibility against every category leader across ChatGPT, Perplexity, Claude, and Gemini — prompt by prompt."
           />
           <StepCard
             n="03"
-            title="Pipeline at stake"
-            desc="We quantify the revenue you're missing from AI-driven discovery."
+            title="Capture"
+            desc="Get a euro-denominated forecast of the pipeline at stake — with the exact placements and content that win the answer."
           />
         </motion.div>
       </section>

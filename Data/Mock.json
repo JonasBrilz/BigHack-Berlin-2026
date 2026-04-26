@@ -1,6 +1,6 @@
 {
     "company_name": "Attio",
-    "executive_summary": "Attio stands to gain €118,494 to €171,599 in revenue, equivalent to 9.87 to 14.3 customers, by improving AI-search visibility, currently at 59.53%. We trail HubSpot, who holds 76.0% visibility, by 45.6 percentage points. To close this gap, we should focus on paid media placements on prospeo.io and simular.ai.",
+    "executive_summary": "Attio could unlock €118,494 to €171,599 in revenue, representing 9.8 to 14.3 customers, by improving AI-search visibility from 59.5% to 76%. We trail HubSpot by 45.6 percentage points in AI-search visibility, with our competitors actively using platforms like prospeo.io and simular.ai. Prioritizing placement on prospeo.io and simular.ai would significantly close this visibility gap.",
     "acv": {
         "value_eur": 12000,
         "source": "https://attio.com/templates/revenue-operations/arr-projection",
@@ -14,6 +14,268 @@
         "pessimistic_customer_equivalents": 9.87,
         "optimistic_customer_equivalents": 14.3
     },
+    "prompt_revenues": [
+        {
+            "prompt_id": "pr_dc713738-efac-4357-a76a-aabf4e7b9f3a",
+            "prompt_message": "Compare CRM options for tracking product-led growth metrics",
+            "volume_source": "chat_fallback",
+            "search_volume": 0,
+            "volume_source_urls": [],
+            "your_visibility": 0.5555555555555556,
+            "your_position": 3,
+            "top_competitor_visibility": 1,
+            "top_competitor_name": "HubSpot",
+            "annual_mentions": 933.3333333333334,
+            "current_annual_revenue_eur": 6048,
+            "pessimistic": {
+                "target_visibility": 0.7276555555555556,
+                "target_position": 1,
+                "target_annual_revenue_eur": 11882.324159999998,
+                "revenue_lift_eur": 5834.324159999998
+            },
+            "optimistic": {
+                "target_visibility": 0.8423555555555555,
+                "target_position": 1,
+                "target_annual_revenue_eur": 13755.329279999996,
+                "revenue_lift_eur": 7707.329279999996
+            },
+            "ai_summary": "For CRM product-led growth, with 55.6% visibility and 3rd place vs HubSpot's 100%, revenue could increase €5,834 to €7,707."
+        },
+        {
+            "prompt_id": "pr_e494f82a-2530-4cdb-b9cb-ff11bb20c33f",
+            "prompt_message": "Compare AI-native CRM platforms for deal health tracking",
+            "volume_source": "chat_fallback",
+            "search_volume": 0,
+            "volume_source_urls": [],
+            "your_visibility": 0.75,
+            "your_position": 4.166666666666667,
+            "top_competitor_visibility": 1,
+            "top_competitor_name": "Salesforce",
+            "annual_mentions": 1260,
+            "current_annual_revenue_eur": 6531.84,
+            "pessimistic": {
+                "target_visibility": 0.9221,
+                "target_position": 2.166666666666667,
+                "target_annual_revenue_eur": 13049.854271999999,
+                "revenue_lift_eur": 6518.0142719999985
+            },
+            "optimistic": {
+                "target_visibility": 1,
+                "target_position": 2.166666666666667,
+                "target_annual_revenue_eur": 14152.319999999996,
+                "revenue_lift_eur": 7620.479999999996
+            },
+            "ai_summary": "In AI-native CRM deal health tracking, your visibility stands at 75% behind Salesforce's 100%, with revenue potential rising from €6,518 to €7,620."
+        },
+        {
+            "prompt_id": "pr_cd03ebde-55ed-4ec5-bf2b-308ffe56c058",
+            "prompt_message": "Top-rated CRM automation platforms for high-growth startups",
+            "volume_source": "chat_fallback",
+            "search_volume": 0,
+            "volume_source_urls": [],
+            "your_visibility": 0.6,
+            "your_position": 4.166666666666667,
+            "top_competitor_visibility": 1,
+            "top_competitor_name": "Pipedrive",
+            "annual_mentions": 1008,
+            "current_annual_revenue_eur": 5225.472,
+            "pessimistic": {
+                "target_visibility": 0.7721,
+                "target_position": 2.166666666666667,
+                "target_annual_revenue_eur": 10927.006271999997,
+                "revenue_lift_eur": 5701.534271999997
+            },
+            "optimistic": {
+                "target_visibility": 0.8868,
+                "target_position": 2.166666666666667,
+                "target_annual_revenue_eur": 12550.277376000002,
+                "revenue_lift_eur": 7324.805376000002
+            },
+            "ai_summary": "In CRM automation for startups, currently at 4.17 vs Pipedrive's 1.0 visibility, your brand could gain €5702 to €7325 in revenue by increasing visibility."
+        },
+        {
+            "prompt_id": "pr_d23e7870-e527-4432-8f28-966709ed868a",
+            "prompt_message": "Which CRM provides the best visibility into PLG customer journeys?",
+            "volume_source": "chat_fallback",
+            "search_volume": 0,
+            "volume_source_urls": [],
+            "your_visibility": 0.25,
+            "your_position": 4.5,
+            "top_competitor_visibility": 1,
+            "top_competitor_name": "HubSpot",
+            "annual_mentions": 450,
+            "current_annual_revenue_eur": 2332.7999999999997,
+            "pessimistic": {
+                "target_visibility": 0.42210000000000003,
+                "target_position": 2.5,
+                "target_annual_revenue_eur": 6400.38672,
+                "revenue_lift_eur": 4067.5867200000007
+            },
+            "optimistic": {
+                "target_visibility": 0.5367999999999999,
+                "target_position": 2.5,
+                "target_annual_revenue_eur": 8139.605759999999,
+                "revenue_lift_eur": 5806.805759999999
+            },
+            "ai_summary": "For PLG customer journey CRM visibility, currently at 25% and 4.5th place behind HubSpot, revenue could increase €4068 to €5807."
+        },
+        {
+            "prompt_id": "pr_535d3e07-eb82-44cf-9568-681a0226c0e9",
+            "prompt_message": "Attio for RevOps: Is it better than legacy CRM options?",
+            "volume_source": "chat_fallback",
+            "search_volume": 0,
+            "volume_source_urls": [],
+            "your_visibility": 1,
+            "your_position": 2.888888888888889,
+            "top_competitor_visibility": 1,
+            "top_competitor_name": "HubSpot",
+            "annual_mentions": 1680,
+            "current_annual_revenue_eur": 10886.4,
+            "pessimistic": {
+                "target_visibility": 1,
+                "target_position": 1,
+                "target_annual_revenue_eur": 16329.599999999997,
+                "revenue_lift_eur": 5443.199999999997
+            },
+            "optimistic": {
+                "target_visibility": 1,
+                "target_position": 1,
+                "target_annual_revenue_eur": 16329.599999999997,
+                "revenue_lift_eur": 5443.199999999997
+            },
+            "ai_summary": "In the \"RevOps: Is it better than legacy CRM options?\" topic, with visibility at 1.0 vs HubSpot’s 1.0, your revenue could rise from €10,886 to €16,330."
+        },
+        {
+            "prompt_id": "pr_b941b2b8-65d6-4f2a-8898-040ab39e3e25",
+            "prompt_message": "Best CRM for scaling a product-led sales motion quickly",
+            "volume_source": "chat_fallback",
+            "search_volume": 0,
+            "volume_source_urls": [],
+            "your_visibility": 0.3333333333333333,
+            "your_position": 1.5,
+            "top_competitor_visibility": 1,
+            "top_competitor_name": "HubSpot",
+            "annual_mentions": 560,
+            "current_annual_revenue_eur": 4717.44,
+            "pessimistic": {
+                "target_visibility": 0.5054333333333333,
+                "target_position": 1,
+                "target_annual_revenue_eur": 8253.524159999999,
+                "revenue_lift_eur": 3536.0841599999994
+            },
+            "optimistic": {
+                "target_visibility": 0.6201333333333333,
+                "target_position": 1,
+                "target_annual_revenue_eur": 10126.52928,
+                "revenue_lift_eur": 5409.089280000001
+            },
+            "ai_summary": "For CRM scaling prompts, with 33% visibility trailing HubSpot’s 100%, revenue uplift is €3,536 to €5,409."
+        },
+        {
+            "prompt_id": "pr_19c5feda-47ae-434c-9515-2f286143adce",
+            "prompt_message": "Best CRM platforms for product-led growth teams tracking user adoption",
+            "volume_source": "chat_fallback",
+            "search_volume": 0,
+            "volume_source_urls": [],
+            "your_visibility": 0.125,
+            "your_position": 2,
+            "top_competitor_visibility": 1,
+            "top_competitor_name": "HubSpot",
+            "annual_mentions": 225,
+            "current_annual_revenue_eur": 1895.3999999999999,
+            "pessimistic": {
+                "target_visibility": 0.29710000000000003,
+                "target_position": 1,
+                "target_annual_revenue_eur": 5198.061599999999,
+                "revenue_lift_eur": 3302.6615999999995
+            },
+            "optimistic": {
+                "target_visibility": 0.4118,
+                "target_position": 1,
+                "target_annual_revenue_eur": 7204.852799999998,
+                "revenue_lift_eur": 5309.452799999998
+            },
+            "ai_summary": "For CRM platforms in product-led growth, currently at 12.5% visibility and 2nd place behind HubSpot, revenue could increase from €3,303 to €5,309."
+        },
+        {
+            "prompt_id": "pr_0dcf8ff5-3a17-48ea-9297-4e0c979593f9",
+            "prompt_message": "Which CRM provides the best real-time data streaming for GTM teams?",
+            "volume_source": "chat_fallback",
+            "search_volume": 0,
+            "volume_source_urls": [],
+            "your_visibility": 0.5,
+            "your_position": 5,
+            "top_competitor_visibility": 1,
+            "top_competitor_name": "HubSpot",
+            "annual_mentions": 840,
+            "current_annual_revenue_eur": 3265.9199999999996,
+            "pessimistic": {
+                "target_visibility": 0.6721,
+                "target_position": 3,
+                "target_annual_revenue_eur": 7316.7494400000005,
+                "revenue_lift_eur": 4050.829440000001
+            },
+            "optimistic": {
+                "target_visibility": 0.7867999999999999,
+                "target_position": 3,
+                "target_annual_revenue_eur": 8565.419519999998,
+                "revenue_lift_eur": 5299.499519999998
+            },
+            "ai_summary": "For real-time CRM data streaming, our visibility stands at 50% (vs HubSpot's 100%), with revenue potential ranging from €4,050 to €5,300."
+        },
+        {
+            "prompt_id": "pr_bdcc62e6-22b4-45b4-ab1a-ff6786bcee34",
+            "prompt_message": "Which CRM is most popular among modern RevOps leaders?",
+            "volume_source": "chat_fallback",
+            "search_volume": 0,
+            "volume_source_urls": [],
+            "your_visibility": 0.375,
+            "your_position": 5,
+            "top_competitor_visibility": 1,
+            "top_competitor_name": "HubSpot",
+            "annual_mentions": 675,
+            "current_annual_revenue_eur": 2624.399999999999,
+            "pessimistic": {
+                "target_visibility": 0.5471,
+                "target_position": 3,
+                "target_annual_revenue_eur": 6381.3744,
+                "revenue_lift_eur": 3756.9744000000005
+            },
+            "optimistic": {
+                "target_visibility": 0.6617999999999999,
+                "target_position": 3,
+                "target_annual_revenue_eur": 7719.2352,
+                "revenue_lift_eur": 5094.835200000001
+            },
+            "ai_summary": "For CRM RevOps leaders, with 37.5% visibility vs HubSpot’s 100%, this prompt’s revenue potential spans €3,757 to €5,095."
+        },
+        {
+            "prompt_id": "pr_e1978d1d-9274-4e5d-8b8f-bb7e88eb29a4",
+            "prompt_message": "Which CRM uses AI best to clean and enrich contact data automatically?",
+            "volume_source": "chat_fallback",
+            "search_volume": 0,
+            "volume_source_urls": [],
+            "your_visibility": 0.14285714285714285,
+            "your_position": 2,
+            "top_competitor_visibility": 1,
+            "top_competitor_name": "Salesforce",
+            "annual_mentions": 240,
+            "current_annual_revenue_eur": 2021.76,
+            "pessimistic": {
+                "target_visibility": 0.3149571428571428,
+                "target_position": 1,
+                "target_annual_revenue_eur": 5143.1241599999985,
+                "revenue_lift_eur": 3121.3641599999983
+            },
+            "optimistic": {
+                "target_visibility": 0.42965714285714285,
+                "target_position": 1,
+                "target_annual_revenue_eur": 7016.129279999998,
+                "revenue_lift_eur": 4994.369279999998
+            },
+            "ai_summary": "For AI CRM data cleaning, with 14.3% visibility and second place behind Salesforce, revenue potential is €3,121 to €4,994."
+        }
+    ],
     "pessimistic": {
         "total_current_annual_revenue_eur": 184941.17485714282,
         "total_potential_annual_revenue_eur": 303435.7246285714,
@@ -81,188 +343,7 @@
         },
         "visit_to_lead_rate": 0.03,
         "lead_to_customer_rate": 0.15,
-        "prompt_revenues": [
-            {
-                "prompt_id": "pr_e494f82a-2530-4cdb-b9cb-ff11bb20c33f",
-                "prompt_message": "Compare AI-native CRM platforms for deal health tracking",
-                "volume_source": "chat_fallback",
-                "search_volume": 0,
-                "volume_source_urls": [],
-                "your_visibility": 0.75,
-                "your_position": 4.166666666666667,
-                "top_competitor_visibility": 1,
-                "top_competitor_name": "Salesforce",
-                "annual_mentions": 1260,
-                "current_annual_revenue_eur": 6531.84,
-                "target_visibility": 0.9221,
-                "target_position": 2.166666666666667,
-                "target_annual_revenue_eur": 13049.854271999999,
-                "revenue_lift_eur": 6518.0142719999985,
-                "ai_summary": "Your AI-native CRM prompt ranks fourth behind Salesforce with a 75% visibility, offering a €6,518 revenue increase potential by improving brand prominence."
-            },
-            {
-                "prompt_id": "pr_dc713738-efac-4357-a76a-aabf4e7b9f3a",
-                "prompt_message": "Compare CRM options for tracking product-led growth metrics",
-                "volume_source": "chat_fallback",
-                "search_volume": 0,
-                "volume_source_urls": [],
-                "your_visibility": 0.5555555555555556,
-                "your_position": 3,
-                "top_competitor_visibility": 1,
-                "top_competitor_name": "HubSpot",
-                "annual_mentions": 933.3333333333334,
-                "current_annual_revenue_eur": 6048,
-                "target_visibility": 0.7276555555555556,
-                "target_position": 1,
-                "target_annual_revenue_eur": 11882.324159999998,
-                "revenue_lift_eur": 5834.324159999998,
-                "ai_summary": "Ranked third in CRM comparison prompts, our brand holds 55.6% visibility behind HubSpot, with a €5,834 revenue uplift potential by improving visibility."
-            },
-            {
-                "prompt_id": "pr_cd03ebde-55ed-4ec5-bf2b-308ffe56c058",
-                "prompt_message": "Top-rated CRM automation platforms for high-growth startups",
-                "volume_source": "chat_fallback",
-                "search_volume": 0,
-                "volume_source_urls": [],
-                "your_visibility": 0.6,
-                "your_position": 4.166666666666667,
-                "top_competitor_visibility": 1,
-                "top_competitor_name": "Pipedrive",
-                "annual_mentions": 1008,
-                "current_annual_revenue_eur": 5225.472,
-                "target_visibility": 0.7721,
-                "target_position": 2.166666666666667,
-                "target_annual_revenue_eur": 10927.006271999997,
-                "revenue_lift_eur": 5701.534271999997,
-                "ai_summary": "For CRM automation, your brand ranks 4.2nd behind Pipedrive with 60% visibility and a €5,700 revenue lift opportunity by improving visibility and positioning."
-            },
-            {
-                "prompt_id": "pr_535d3e07-eb82-44cf-9568-681a0226c0e9",
-                "prompt_message": "Attio for RevOps: Is it better than legacy CRM options?",
-                "volume_source": "chat_fallback",
-                "search_volume": 0,
-                "volume_source_urls": [],
-                "your_visibility": 1,
-                "your_position": 2.888888888888889,
-                "top_competitor_visibility": 1,
-                "top_competitor_name": "HubSpot",
-                "annual_mentions": 1680,
-                "current_annual_revenue_eur": 10886.4,
-                "target_visibility": 1,
-                "target_position": 1,
-                "target_annual_revenue_eur": 16329.599999999997,
-                "revenue_lift_eur": 5443.199999999997,
-                "ai_summary": "With a 1.0 visibility and 2.89 ranking behind HubSpot, Attio can capture a €5,443 revenue lift by dominating the RevOps vs legacy CRM topic."
-            },
-            {
-                "prompt_id": "pr_d23e7870-e527-4432-8f28-966709ed868a",
-                "prompt_message": "Which CRM provides the best visibility into PLG customer journeys?",
-                "volume_source": "chat_fallback",
-                "search_volume": 0,
-                "volume_source_urls": [],
-                "your_visibility": 0.25,
-                "your_position": 4.5,
-                "top_competitor_visibility": 1,
-                "top_competitor_name": "HubSpot",
-                "annual_mentions": 450,
-                "current_annual_revenue_eur": 2332.7999999999997,
-                "target_visibility": 0.42210000000000003,
-                "target_position": 2.5,
-                "target_annual_revenue_eur": 6400.38672,
-                "revenue_lift_eur": 4067.5867200000007,
-                "ai_summary": "At 4.5 in the 'PLG customer journey CRM' ranking, your brand trails HubSpot with only 25% visibility, missing a €4,067.59 revenue gain."
-            },
-            {
-                "prompt_id": "pr_0dcf8ff5-3a17-48ea-9297-4e0c979593f9",
-                "prompt_message": "Which CRM provides the best real-time data streaming for GTM teams?",
-                "volume_source": "chat_fallback",
-                "search_volume": 0,
-                "volume_source_urls": [],
-                "your_visibility": 0.5,
-                "your_position": 5,
-                "top_competitor_visibility": 1,
-                "top_competitor_name": "HubSpot",
-                "annual_mentions": 840,
-                "current_annual_revenue_eur": 3265.9199999999996,
-                "target_visibility": 0.6721,
-                "target_position": 3,
-                "target_annual_revenue_eur": 7316.7494400000005,
-                "revenue_lift_eur": 4050.829440000001,
-                "ai_summary": "At 5th place with 50% visibility on real-time data streaming prompts, you're behind HubSpot but can gain €4,050.83 by improving position."
-            },
-            {
-                "prompt_id": "pr_bdcc62e6-22b4-45b4-ab1a-ff6786bcee34",
-                "prompt_message": "Which CRM is most popular among modern RevOps leaders?",
-                "volume_source": "chat_fallback",
-                "search_volume": 0,
-                "volume_source_urls": [],
-                "your_visibility": 0.375,
-                "your_position": 5,
-                "top_competitor_visibility": 1,
-                "top_competitor_name": "HubSpot",
-                "annual_mentions": 675,
-                "current_annual_revenue_eur": 2624.399999999999,
-                "target_visibility": 0.5471,
-                "target_position": 3,
-                "target_annual_revenue_eur": 6381.3744,
-                "revenue_lift_eur": 3756.9744000000005,
-                "ai_summary": "Your brand ranks 5th in CRM discussions, behind HubSpot, with a €3,757 revenue potential increase from stronger visibility in RevOps leader conversations."
-            },
-            {
-                "prompt_id": "pr_b941b2b8-65d6-4f2a-8898-040ab39e3e25",
-                "prompt_message": "Best CRM for scaling a product-led sales motion quickly",
-                "volume_source": "chat_fallback",
-                "search_volume": 0,
-                "volume_source_urls": [],
-                "your_visibility": 0.3333333333333333,
-                "your_position": 1.5,
-                "top_competitor_visibility": 1,
-                "top_competitor_name": "HubSpot",
-                "annual_mentions": 560,
-                "current_annual_revenue_eur": 4717.44,
-                "target_visibility": 0.5054333333333333,
-                "target_position": 1,
-                "target_annual_revenue_eur": 8253.524159999999,
-                "revenue_lift_eur": 3536.0841599999994,
-                "ai_summary": "Your brand ranks 1.5 behind HubSpot in the CRM prompt, with a 3,536 EUR revenue opportunity by improving visibility in scaling product-led sales."
-            },
-            {
-                "prompt_id": "pr_19c5feda-47ae-434c-9515-2f286143adce",
-                "prompt_message": "Best CRM platforms for product-led growth teams tracking user adoption",
-                "volume_source": "chat_fallback",
-                "search_volume": 0,
-                "volume_source_urls": [],
-                "your_visibility": 0.125,
-                "your_position": 2,
-                "top_competitor_visibility": 1,
-                "top_competitor_name": "HubSpot",
-                "annual_mentions": 225,
-                "current_annual_revenue_eur": 1895.3999999999999,
-                "target_visibility": 0.29710000000000003,
-                "target_position": 1,
-                "target_annual_revenue_eur": 5198.061599999999,
-                "revenue_lift_eur": 3302.6615999999995,
-                "ai_summary": "You rank 2nd for product-led CRM prompts with 12.5% visibility, behind HubSpot, and can increase revenue by €3,303 from current €1,900."
-            },
-            {
-                "prompt_id": "pr_e1978d1d-9274-4e5d-8b8f-bb7e88eb29a4",
-                "prompt_message": "Which CRM uses AI best to clean and enrich contact data automatically?",
-                "volume_source": "chat_fallback",
-                "search_volume": 0,
-                "volume_source_urls": [],
-                "your_visibility": 0.14285714285714285,
-                "your_position": 2,
-                "top_competitor_visibility": 1,
-                "top_competitor_name": "Salesforce",
-                "annual_mentions": 240,
-                "current_annual_revenue_eur": 2021.76,
-                "target_visibility": 0.3149571428571428,
-                "target_position": 1,
-                "target_annual_revenue_eur": 5143.1241599999985,
-                "revenue_lift_eur": 3121.3641599999983,
-                "ai_summary": "For AI-driven CRM data cleaning, your brand ranks second behind Salesforce with 14.3% visibility, holding a €3,121 revenue opportunity."
-            }
-        ],
+        "prompt_revenues": [],
         "top_actions": [
             {
                 "prompt_id": "pr_e494f82a-2530-4cdb-b9cb-ff11bb20c33f",
@@ -464,188 +545,7 @@
         },
         "visit_to_lead_rate": 0.03,
         "lead_to_customer_rate": 0.15,
-        "prompt_revenues": [
-            {
-                "prompt_id": "pr_dc713738-efac-4357-a76a-aabf4e7b9f3a",
-                "prompt_message": "Compare CRM options for tracking product-led growth metrics",
-                "volume_source": "chat_fallback",
-                "search_volume": 0,
-                "volume_source_urls": [],
-                "your_visibility": 0.5555555555555556,
-                "your_position": 3,
-                "top_competitor_visibility": 1,
-                "top_competitor_name": "HubSpot",
-                "annual_mentions": 933.3333333333334,
-                "current_annual_revenue_eur": 6048,
-                "target_visibility": 0.8423555555555555,
-                "target_position": 1,
-                "target_annual_revenue_eur": 13755.329279999996,
-                "revenue_lift_eur": 7707.329279999996,
-                "ai_summary": "In the CRM comparison prompt, with a 55.5% visibility and third place behind HubSpot, your brand can gain €7,707 by improving its position."
-            },
-            {
-                "prompt_id": "pr_e494f82a-2530-4cdb-b9cb-ff11bb20c33f",
-                "prompt_message": "Compare AI-native CRM platforms for deal health tracking",
-                "volume_source": "chat_fallback",
-                "search_volume": 0,
-                "volume_source_urls": [],
-                "your_visibility": 0.75,
-                "your_position": 4.166666666666667,
-                "top_competitor_visibility": 1,
-                "top_competitor_name": "Salesforce",
-                "annual_mentions": 1260,
-                "current_annual_revenue_eur": 6531.84,
-                "target_visibility": 1,
-                "target_position": 2.166666666666667,
-                "target_annual_revenue_eur": 14152.319999999996,
-                "revenue_lift_eur": 7620.479999999996,
-                "ai_summary": "For AI-native CRM deal health tracking, your brand leads Salesforce with a 75% visibility share, unlocking €7,620 in revenue potential."
-            },
-            {
-                "prompt_id": "pr_cd03ebde-55ed-4ec5-bf2b-308ffe56c058",
-                "prompt_message": "Top-rated CRM automation platforms for high-growth startups",
-                "volume_source": "chat_fallback",
-                "search_volume": 0,
-                "volume_source_urls": [],
-                "your_visibility": 0.6,
-                "your_position": 4.166666666666667,
-                "top_competitor_visibility": 1,
-                "top_competitor_name": "Pipedrive",
-                "annual_mentions": 1008,
-                "current_annual_revenue_eur": 5225.472,
-                "target_visibility": 0.8868,
-                "target_position": 2.166666666666667,
-                "target_annual_revenue_eur": 12550.277376000002,
-                "revenue_lift_eur": 7324.805376000002,
-                "ai_summary": "For the top-rated CRM automation prompt, your brand ranks 4.2nd behind Pipedrive with 60% visibility, creating a €7,325 revenue opportunity."
-            },
-            {
-                "prompt_id": "pr_d23e7870-e527-4432-8f28-966709ed868a",
-                "prompt_message": "Which CRM provides the best visibility into PLG customer journeys?",
-                "volume_source": "chat_fallback",
-                "search_volume": 0,
-                "volume_source_urls": [],
-                "your_visibility": 0.25,
-                "your_position": 4.5,
-                "top_competitor_visibility": 1,
-                "top_competitor_name": "HubSpot",
-                "annual_mentions": 450,
-                "current_annual_revenue_eur": 2332.7999999999997,
-                "target_visibility": 0.5367999999999999,
-                "target_position": 2.5,
-                "target_annual_revenue_eur": 8139.605759999999,
-                "revenue_lift_eur": 5806.805759999999,
-                "ai_summary": "For the \"PLG customer journey\" prompt, our brand currently ranks fourth behind HubSpot with only 25% visibility, creating a €5,807 revenue opportunity."
-            },
-            {
-                "prompt_id": "pr_535d3e07-eb82-44cf-9568-681a0226c0e9",
-                "prompt_message": "Attio for RevOps: Is it better than legacy CRM options?",
-                "volume_source": "chat_fallback",
-                "search_volume": 0,
-                "volume_source_urls": [],
-                "your_visibility": 1,
-                "your_position": 2.888888888888889,
-                "top_competitor_visibility": 1,
-                "top_competitor_name": "HubSpot",
-                "annual_mentions": 1680,
-                "current_annual_revenue_eur": 10886.4,
-                "target_visibility": 1,
-                "target_position": 1,
-                "target_annual_revenue_eur": 16329.599999999997,
-                "revenue_lift_eur": 5443.199999999997,
-                "ai_summary": "Your brand leads in RevOps prompt visibility, ranking ahead of HubSpot with 1680 mentions and a potential EUR 5,443 revenue boost by enhancing content positioning."
-            },
-            {
-                "prompt_id": "pr_b941b2b8-65d6-4f2a-8898-040ab39e3e25",
-                "prompt_message": "Best CRM for scaling a product-led sales motion quickly",
-                "volume_source": "chat_fallback",
-                "search_volume": 0,
-                "volume_source_urls": [],
-                "your_visibility": 0.3333333333333333,
-                "your_position": 1.5,
-                "top_competitor_visibility": 1,
-                "top_competitor_name": "HubSpot",
-                "annual_mentions": 560,
-                "current_annual_revenue_eur": 4717.44,
-                "target_visibility": 0.6201333333333333,
-                "target_position": 1,
-                "target_annual_revenue_eur": 10126.52928,
-                "revenue_lift_eur": 5409.089280000001,
-                "ai_summary": "At 1.5th place for \"Best CRM for scaling a product-led sales motion,\" we trail HubSpot with a 33% visibility share, yet have a €5,409 revenue opportunity by enhancing visibility."
-            },
-            {
-                "prompt_id": "pr_19c5feda-47ae-434c-9515-2f286143adce",
-                "prompt_message": "Best CRM platforms for product-led growth teams tracking user adoption",
-                "volume_source": "chat_fallback",
-                "search_volume": 0,
-                "volume_source_urls": [],
-                "your_visibility": 0.125,
-                "your_position": 2,
-                "top_competitor_visibility": 1,
-                "top_competitor_name": "HubSpot",
-                "annual_mentions": 225,
-                "current_annual_revenue_eur": 1895.3999999999999,
-                "target_visibility": 0.4118,
-                "target_position": 1,
-                "target_annual_revenue_eur": 7204.852799999998,
-                "revenue_lift_eur": 5309.452799999998,
-                "ai_summary": "At 2nd place for CRM platforms in product-led growth, your brand trails HubSpot by 0.125 visibility but holds a €5,309 revenue opportunity by improving visibility."
-            },
-            {
-                "prompt_id": "pr_0dcf8ff5-3a17-48ea-9297-4e0c979593f9",
-                "prompt_message": "Which CRM provides the best real-time data streaming for GTM teams?",
-                "volume_source": "chat_fallback",
-                "search_volume": 0,
-                "volume_source_urls": [],
-                "your_visibility": 0.5,
-                "your_position": 5,
-                "top_competitor_visibility": 1,
-                "top_competitor_name": "HubSpot",
-                "annual_mentions": 840,
-                "current_annual_revenue_eur": 3265.9199999999996,
-                "target_visibility": 0.7867999999999999,
-                "target_position": 3,
-                "target_annual_revenue_eur": 8565.419519999998,
-                "revenue_lift_eur": 5299.499519999998,
-                "ai_summary": "Our brand ranks 5th in real-time CRM data streaming discussions, behind HubSpot, with a €5,300 revenue uplift opportunity by improving visibility."
-            },
-            {
-                "prompt_id": "pr_bdcc62e6-22b4-45b4-ab1a-ff6786bcee34",
-                "prompt_message": "Which CRM is most popular among modern RevOps leaders?",
-                "volume_source": "chat_fallback",
-                "search_volume": 0,
-                "volume_source_urls": [],
-                "your_visibility": 0.375,
-                "your_position": 5,
-                "top_competitor_visibility": 1,
-                "top_competitor_name": "HubSpot",
-                "annual_mentions": 675,
-                "current_annual_revenue_eur": 2624.399999999999,
-                "target_visibility": 0.6617999999999999,
-                "target_position": 3,
-                "target_annual_revenue_eur": 7719.2352,
-                "revenue_lift_eur": 5094.835200000001,
-                "ai_summary": "Your brand ranks 5th in CRM visibility behind HubSpot, with a 37.5% share, and can boost revenue by €5,095 by improving visibility in RevOps CRM discussions."
-            },
-            {
-                "prompt_id": "pr_e1978d1d-9274-4e5d-8b8f-bb7e88eb29a4",
-                "prompt_message": "Which CRM uses AI best to clean and enrich contact data automatically?",
-                "volume_source": "chat_fallback",
-                "search_volume": 0,
-                "volume_source_urls": [],
-                "your_visibility": 0.14285714285714285,
-                "your_position": 2,
-                "top_competitor_visibility": 1,
-                "top_competitor_name": "Salesforce",
-                "annual_mentions": 240,
-                "current_annual_revenue_eur": 2021.76,
-                "target_visibility": 0.42965714285714285,
-                "target_position": 1,
-                "target_annual_revenue_eur": 7016.129279999998,
-                "revenue_lift_eur": 4994.369279999998,
-                "ai_summary": "In AI contact data CRM, we're second to Salesforce with 14.3% visibility, yet can capture €4,994 more by boosting our AI-driven positioning."
-            }
-        ],
+        "prompt_revenues": [],
         "top_actions": [
             {
                 "prompt_id": "pr_dc713738-efac-4357-a76a-aabf4e7b9f3a",
@@ -819,13 +719,13 @@
                         "citation_count": 4,
                         "competitors_present": [
                             {
-                                "brand_id": "kw_5604d168-9e16-4b79-aeec-2628322bb240",
-                                "brand_name": "Salesforce",
+                                "brand_id": "kw_0f576912-e163-4829-a15e-a70238d5fec7",
+                                "brand_name": "Pipedrive",
                                 "mention_chats": 24
                             },
                             {
-                                "brand_id": "kw_0f576912-e163-4829-a15e-a70238d5fec7",
-                                "brand_name": "Pipedrive",
+                                "brand_id": "kw_5604d168-9e16-4b79-aeec-2628322bb240",
+                                "brand_name": "Salesforce",
                                 "mention_chats": 24
                             },
                             {
@@ -883,13 +783,13 @@
                         "citation_count": 5,
                         "competitors_present": [
                             {
-                                "brand_id": "kw_5604d168-9e16-4b79-aeec-2628322bb240",
-                                "brand_name": "Salesforce",
+                                "brand_id": "kw_0f576912-e163-4829-a15e-a70238d5fec7",
+                                "brand_name": "Pipedrive",
                                 "mention_chats": 20
                             },
                             {
-                                "brand_id": "kw_0f576912-e163-4829-a15e-a70238d5fec7",
-                                "brand_name": "Pipedrive",
+                                "brand_id": "kw_5604d168-9e16-4b79-aeec-2628322bb240",
+                                "brand_name": "Salesforce",
                                 "mention_chats": 20
                             },
                             {
@@ -906,6 +806,11 @@
                         "citation_count": 1,
                         "competitors_present": [
                             {
+                                "brand_id": "kw_0f576912-e163-4829-a15e-a70238d5fec7",
+                                "brand_name": "Pipedrive",
+                                "mention_chats": 13
+                            },
+                            {
                                 "brand_id": "kw_5604d168-9e16-4b79-aeec-2628322bb240",
                                 "brand_name": "Salesforce",
                                 "mention_chats": 13
@@ -913,11 +818,6 @@
                             {
                                 "brand_id": "kw_f8720a05-a06d-4702-8fde-d73d071696de",
                                 "brand_name": "Zoho",
-                                "mention_chats": 13
-                            },
-                            {
-                                "brand_id": "kw_0f576912-e163-4829-a15e-a70238d5fec7",
-                                "brand_name": "Pipedrive",
                                 "mention_chats": 13
                             },
                             {
